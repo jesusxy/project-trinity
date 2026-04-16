@@ -1,0 +1,20 @@
+{{ define "main" }}
+  <div class="intro">
+    {{ .Content }}
+  </div>
+
+  {{ if .Site.RegularPages }}
+  <h1>recent posts</h1>
+  <ul class="post-list">
+    {{ range first 10 .Site.RegularPages }}
+    <li>
+      <div class="post-title"><a href="{{ .Permalink }}">{{ .Title }}</a></div>
+      <div class="post-meta">
+        {{ .Date.Format "2006-01-02" }} &mdash;
+        {{ range .Params.tags }}<span class="tag">{{ . }}</span>{{ end }}
+      </div>
+    </li>
+    {{ end }}
+  </ul>
+  {{ end }}
+{{ end }}

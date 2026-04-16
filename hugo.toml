@@ -1,0 +1,25 @@
+baseURL = "https://trinitydef.com/"
+languageCode = "en-us"
+title = "trinity"
+theme = "trinity"
+
+[params]
+  description = "security research / malware analysis / systems"
+
+[menu]
+  [[menu.main]]
+    name = "now"
+    url = "/now/"
+    weight = 1
+  [[menu.main]]
+    name = "canon"
+    url = "/canon/"
+    weight = 2
+  [[menu.main]]
+    name = "labs"
+    url = "/labs/"
+    weight = 3
+  [[menu.main]]
+    name = "projects"
+    url = "/projects/"
+    weight = 4

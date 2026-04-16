@@ -1,0 +1,18 @@
+{{ define "main" }}
+  <h1>{{ .Title }}</h1>
+  {{ if .Content }}<div>{{ .Content }}</div>{{ end }}
+  <ul class="post-list">
+    {{ range .Pages }}
+    <li>
+      <div class="post-title"><a href="{{ .Permalink }}">{{ .Title }}</a></div>
+      <div class="post-meta">
+        {{ .Date.Format "2006-01-02" }} &mdash;
+        {{ range .Params.tags }}<span class="tag">{{ . }}</span>{{ end }}
+      </div>
+      {{ if .Params.description }}
+      <div style="color: #444; margin-top: 2px;">{{ .Params.description }}</div>
+      {{ end }}
+    </li>
+    {{ end }}
+  </ul>
+{{ end }}

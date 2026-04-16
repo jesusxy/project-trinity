@@ -1,0 +1,8 @@
+<div id="header">
+  <a href="/" class="site-title">{{ .Site.Title }}</a>
+  <nav>
+    {{ range .Site.Menus.main }}
+      <a href="{{ .URL }}">{{ .Name }}</a>
+    {{ end }}
+  </nav>
+</div>
