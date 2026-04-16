@@ -8,4 +8,4 @@ building [loupe](/projects/loupe) — an emulation-based malware deobfuscator in
 
 previously: backend/distributed systems at John Deere Financial, Fubo Gaming.
 
-[github](https://github.com/) | [linkedin](https://linkedin.com/)
+[github](https://github.com/jesusxy) | [linkedin](https://linkedin.com/jesuschvz)
