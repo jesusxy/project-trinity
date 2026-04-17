@@ -54,15 +54,6 @@ body {
   text-decoration: underline;
 }
 
-/* Footer */
-.nika {
-  text-align: center;
-  font-family: Verdana, sans-serif;
-  font-size: 0.75rem;
-  color: #999;
-  letter-spacing: 0.2rem;
-}
-
 /* Main content */
 #content {
   padding: 8px 0;
@@ -209,6 +200,22 @@ a:hover {
 #footer a {
   color: #828282;
   margin: 0 6px;
+}
+
+.nika {
+  text-align: center;
+  font-family: Verdana, sans-serif;
+  font-size: 0.75rem;
+  color: #999;
+  letter-spacing: 0.2rem;
+}
+
+.footer-quote {
+  text-align: center;
+  font-style: italic;
+  color: #999;
+  font-size: 11px;
+  margin-top: 4px;
 }
 
 /* Landing page intro */
