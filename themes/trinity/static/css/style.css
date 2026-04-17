@@ -127,6 +127,10 @@ a:hover {
   font-size: 11px;
 }
 
+.post-content li {
+  margin-bottom: 0.5rem;
+}
+
 /* Canon page */
 .canon-section {
   margin-bottom: 20px;
