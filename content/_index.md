@@ -7,7 +7,7 @@ title: "the trinity project"
 security researcher. malware analyst. systems engineer. \
 previously: backend/distributed systems at John Deere Financial, Fubo Gaming. \
 \
-interest : math, computer arch, malware, the art of cyberwarfare, civic tech, theology, jazz, house music... all music. art, film, physical media, f1, good food, a nice bikeride. learning. existing
+interest : math, computer arch, malware, the art of cyberwarfare, civic tech, theology, jazz, house music, all music. art, film, physical media, f1, good food, bike rides, learning. existing
 
 - tap in
   - [proof of work](https://github.com/jesusxy)

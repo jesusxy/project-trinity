@@ -1,6 +1,6 @@
 baseURL = "https://jesusxy.github.io/thetrinityproject/"
 languageCode = "en-us"
-title = "thetrinityproject"
+title = "the trinity project"
 theme = "trinity"
 
 [params]
