@@ -10,4 +10,4 @@ these are texts, people, and ideas that form the bedrock of how i work and why. 
 - [A Cypherpunk's Manifesto](https://www.activism.net/cypherpunk/manifesto.html) — Eric Hughes, 1993
 - [The Crypto Anarchist Manifesto](https://www.activism.net/cypherpunk/crypto-anarchy.html) — Timothy May, 1988
 - [The Artist Is Absent](https://youtu.be/W0dPEYIMVtw?si=ws6afUkCXlQIBlxJ&t=365) - Martin Margiela
-- [If its a good idea, its a God idea](https://youtu.be/4AWLcxTGZPA?si=-e1Hf3N--wN5d3iu&t=7340) - Ye
+- ["If its a good idea, its a God idea"](https://youtu.be/4AWLcxTGZPA?si=-e1Hf3N--wN5d3iu&t=7340) - Ye
