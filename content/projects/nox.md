@@ -9,4 +9,4 @@ intrusion detection system with stateful rules engine, MITRE ATT&CK mapping, str
 
 **status:** complete
 
-[github →](https://github.com/)
+[github →](https://github.com/jesusxy/bit-by-bit/tree/master/nox)
