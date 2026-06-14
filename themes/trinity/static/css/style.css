@@ -83,7 +83,6 @@ code {
 .site-title {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
   color: var(--ink);
   font-size: 18px;
   font-weight: 700;
@@ -94,26 +93,6 @@ code {
 
 .site-title:visited {
   color: var(--ink);
-}
-
-.site-mark {
-  position: relative;
-  width: 24px;
-  height: 24px;
-  border: 3px solid var(--ink);
-  border-radius: 50%;
-}
-
-.site-mark::after {
-  position: absolute;
-  right: -5px;
-  bottom: -7px;
-  left: -5px;
-  height: 7px;
-  content: "";
-  border: 3px solid var(--ink);
-  border-top: 0;
-  transform: skewX(-28deg);
 }
 
 .site-header nav {
@@ -685,11 +664,23 @@ code {
   background: var(--ink);
 }
 
+.footer-signature {
+  padding: 24px;
+  background: var(--paper-bright);
+  text-align: center;
+}
+
+.nika {
+  margin: 0 0 7px;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+}
+
 .footer-quote {
   margin: 0;
-  padding: 26px;
   color: var(--muted);
-  background: var(--paper-bright);
   font-family: var(--serif);
   font-size: 14px;
   font-style: italic;
