@@ -568,6 +568,490 @@ code {
   font-size: 12px;
 }
 
+/* Current operations */
+.operations-board {
+  margin-top: 30px;
+  border-right: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+}
+
+.operation-row {
+  display: grid;
+  grid-template-columns: 130px 100px 230px minmax(0, 1fr);
+  min-height: 68px;
+  background: var(--paper-bright);
+  border-bottom: 1px solid var(--line);
+}
+
+.operation-row > span {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  padding: 11px 13px;
+  border-right: 1px solid var(--line-soft);
+  overflow-wrap: anywhere;
+}
+
+.operation-row > span:last-child {
+  border-right: 0;
+}
+
+.operation-head {
+  min-height: 30px;
+  color: var(--muted);
+  background: #e4e4de;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.operation-head > span {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.operation-category,
+.operation-status {
+  font-size: 10px;
+  letter-spacing: 0.05em;
+}
+
+.operation-category {
+  color: var(--cobalt-dark);
+  font-weight: 700;
+}
+
+.operation-status {
+  gap: 7px;
+  color: var(--success);
+  font-weight: 700;
+}
+
+.operation-status::before {
+  width: 7px;
+  height: 7px;
+  content: "";
+  background: currentColor;
+  border-radius: 50%;
+}
+
+.status-idle {
+  color: var(--muted);
+}
+
+.operation-subject {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.operation-detail {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+/* Project engineering briefs */
+.project-brief,
+.system-architecture,
+.capability-section,
+.project-phase,
+.reference-board {
+  margin-top: 30px;
+}
+
+.project-brief {
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+}
+
+.project-brief-grid {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.7fr) minmax(0, 1.5fr);
+  background: var(--paper-bright);
+}
+
+.project-spec-panel,
+.project-mission {
+  min-width: 0;
+  padding: 24px;
+}
+
+.project-spec-panel {
+  background:
+    linear-gradient(90deg, transparent 0, transparent calc(100% - 1px), rgba(22, 93, 255, 0.18) calc(100% - 1px)),
+    #e6e6e0;
+  border-right: 1px solid var(--line);
+}
+
+.module-label {
+  display: block;
+  color: var(--cobalt-dark);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.project-spec-panel dl {
+  margin: 18px 0 0;
+}
+
+.project-spec-panel dl div {
+  display: grid;
+  grid-template-columns: 82px minmax(0, 1fr);
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+}
+
+.project-spec-panel dt {
+  color: var(--muted);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.project-spec-panel dd {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.project-prose {
+  margin-top: 16px;
+  font-family: var(--serif);
+  font-size: 18px;
+  line-height: 1.65;
+}
+
+.project-prose p {
+  margin: 0 0 1em;
+}
+
+.project-prose p:last-child {
+  margin-bottom: 0;
+}
+
+.project-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.project-links a {
+  display: inline-flex;
+  justify-content: space-between;
+  gap: 18px;
+  min-width: 190px;
+  padding: 9px 11px;
+  color: #fff;
+  background: var(--ink);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+}
+
+.project-links a:hover {
+  color: #fff;
+  background: var(--cobalt);
+}
+
+.system-architecture,
+.capability-section,
+.project-phase {
+  border-right: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+}
+
+.system-flow {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  background: var(--paper-bright);
+  border-bottom: 1px solid var(--line);
+}
+
+.flow-step {
+  position: relative;
+  min-height: 118px;
+  padding: 18px 14px;
+  border-right: 1px solid var(--line);
+}
+
+.flow-step:last-child {
+  border-right: 0;
+}
+
+.flow-step:not(:last-child)::after {
+  position: absolute;
+  top: 50%;
+  right: -8px;
+  z-index: 1;
+  width: 15px;
+  height: 15px;
+  color: #fff;
+  background: var(--cobalt);
+  border-radius: 50%;
+  content: ">";
+  font-size: 9px;
+  line-height: 15px;
+  text-align: center;
+}
+
+.flow-index {
+  display: block;
+  color: var(--cobalt-dark);
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.flow-name {
+  display: block;
+  margin-top: 30px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.capability-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  background: var(--paper-bright);
+  border-bottom: 1px solid var(--line);
+}
+
+.capability-module {
+  min-width: 0;
+  padding: 22px;
+  border-right: 1px solid var(--line);
+}
+
+.capability-module:last-child {
+  border-right: 0;
+}
+
+.capability-index {
+  color: var(--cobalt-dark);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.capability-module h2 {
+  margin: 32px 0 9px;
+  font-family: var(--serif);
+  font-size: 28px;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+}
+
+.capability-module p,
+.phase-grid p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.phase-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: var(--paper-bright);
+  border-bottom: 1px solid var(--line);
+}
+
+.phase-grid > div {
+  min-width: 0;
+  min-height: 125px;
+  padding: 22px;
+  border-right: 1px solid var(--line);
+}
+
+.phase-grid > div:last-child {
+  border-right: 0;
+}
+
+.phase-grid p {
+  margin-top: 20px;
+  color: var(--ink);
+}
+
+/* Canon reference board */
+.canon-statement {
+  max-width: 660px;
+  margin: 34px 0 0;
+  font-family: var(--serif);
+  font-size: 22px;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.canon-statement p {
+  margin: 0;
+}
+
+.reference-board {
+  border-right: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+}
+
+.reference-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  background: var(--line);
+  gap: 1px;
+}
+
+.reference-card {
+  position: relative;
+  display: flex;
+  grid-column: span 4;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+  min-height: 220px;
+  padding: 16px;
+  overflow: hidden;
+  background: var(--paper-bright);
+}
+
+.reference-card:nth-child(1) {
+  grid-column: span 5;
+}
+
+.reference-card:nth-child(2) {
+  grid-column: span 7;
+}
+
+.reference-card:nth-child(3) {
+  grid-column: span 4;
+}
+
+.reference-card:nth-child(4) {
+  grid-column: span 5;
+}
+
+.reference-card:nth-child(5) {
+  grid-column: span 3;
+}
+
+.reference-card:nth-child(6) {
+  grid-column: span 7;
+}
+
+.reference-card:nth-child(7) {
+  grid-column: span 5;
+}
+
+.reference-featured {
+  color: #fff;
+  background: var(--ink);
+}
+
+.reference-signal {
+  color: #fff;
+  background: var(--cobalt);
+}
+
+.reference-meta {
+  display: flex;
+  position: relative;
+  z-index: 1;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.reference-standard .reference-meta,
+.reference-standard .reference-format,
+.reference-standard .reference-body p {
+  color: var(--muted);
+}
+
+.reference-featured .reference-meta,
+.reference-featured .reference-format,
+.reference-featured .reference-body p,
+.reference-signal .reference-meta,
+.reference-signal .reference-format,
+.reference-signal .reference-body p {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.reference-body {
+  position: relative;
+  z-index: 1;
+  margin-top: 50px;
+}
+
+.reference-format {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.reference-body h2 {
+  margin: 10px 0 13px;
+  font-family: var(--serif);
+  font-size: clamp(22px, 3vw, 34px);
+  font-weight: 400;
+  line-height: 1.03;
+  letter-spacing: -0.035em;
+}
+
+.reference-body h2 a,
+.reference-body h2 a:visited {
+  color: inherit;
+  text-decoration-color: currentColor;
+  text-decoration-thickness: 1px;
+}
+
+.reference-body h2 a:hover {
+  color: inherit;
+  text-decoration-thickness: 3px;
+}
+
+.reference-body p {
+  margin: 0;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.reference-mark {
+  position: absolute;
+  right: -40px;
+  bottom: -55px;
+  width: 150px;
+  height: 150px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  opacity: 0.14;
+}
+
+.reference-mark::before,
+.reference-mark::after {
+  position: absolute;
+  content: "";
+  background: currentColor;
+}
+
+.reference-mark::before {
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+}
+
+.reference-mark::after {
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 100%;
+}
+
 /* Analysis log */
 .analysis-log {
   margin-top: 30px;
@@ -726,6 +1210,20 @@ code {
   .dossier-specs-lab {
     grid-template-columns: repeat(3, 1fr);
   }
+
+  .project-brief-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .project-spec-panel {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .reference-card,
+  .reference-card:nth-child(n) {
+    grid-column: span 6;
+  }
 }
 
 @media (max-width: 640px) {
@@ -860,6 +1358,90 @@ code {
 
   .analysis-entry {
     grid-template-columns: 1fr;
+  }
+
+  .operation-head {
+    display: none;
+  }
+
+  .operation-row {
+    grid-template-columns: 92px minmax(0, 1fr);
+    padding: 8px 0;
+  }
+
+  .operation-row > span {
+    padding: 4px 10px;
+    border-right: 0;
+  }
+
+  .operation-category {
+    grid-column: 1;
+    grid-row: 1;
+    border-right: 1px solid var(--line-soft) !important;
+  }
+
+  .operation-status {
+    grid-column: 1;
+    grid-row: 2;
+    border-right: 1px solid var(--line-soft) !important;
+  }
+
+  .operation-subject {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .operation-detail {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .system-flow,
+  .capability-grid,
+  .phase-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .flow-step {
+    min-height: 82px;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .flow-step:last-child {
+    border-bottom: 0;
+  }
+
+  .flow-step:not(:last-child)::after {
+    top: auto;
+    right: 14px;
+    bottom: -8px;
+    content: "v";
+  }
+
+  .flow-name {
+    margin-top: 18px;
+  }
+
+  .capability-module,
+  .phase-grid > div {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .capability-module:last-child,
+  .phase-grid > div:last-child {
+    border-bottom: 0;
+  }
+
+  .reference-card,
+  .reference-card:nth-child(n) {
+    grid-column: span 12;
+    min-height: 190px;
+  }
+
+  .canon-statement {
+    font-size: 19px;
   }
 
   .entry-rail {

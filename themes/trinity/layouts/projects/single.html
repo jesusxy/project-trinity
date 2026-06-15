@@ -1,0 +1,103 @@
+{{ define "main" }}
+  <article class="dossier project-dossier">
+    <header class="dossier-header">
+      <div class="eyebrow">{{ .Params.record_id | default "PRJ-000" }} / ENGINEERING BRIEF</div>
+      <h1>{{ .Title }}</h1>
+      {{ with .Params.description }}<p class="dossier-deck">{{ . }}</p>{{ end }}
+      <div class="dossier-specs">
+        <span><b>RECORD</b> {{ .Params.record_id | default "PRJ-000" }}</span>
+        <span><b>STATUS</b> {{ .Params.status | default "FILED" | upper }}</span>
+        <span><b>INITIATED</b> {{ .Date.Format "2006" }}</span>
+        <span><b>CLASS</b> {{ .Params.record_class | default "SOFTWARE" | upper }}</span>
+      </div>
+    </header>
+
+    {{ with .Params.tags }}
+    <div class="tag-strip">
+      <span class="tag-label">INDEX TERMS</span>
+      {{ range . }}<span class="tag">{{ . }}</span>{{ end }}
+    </div>
+    {{ end }}
+
+    <section class="project-brief">
+      <div class="section-control">
+        <span>PROJECT DOSSIER / {{ upper .Title }}</span>
+        <span>{{ .Params.record_id }}</span>
+      </div>
+      <div class="project-brief-grid">
+        <aside class="project-spec-panel">
+          <div class="module-label">SPECIFICATIONS</div>
+          <dl>
+            {{ range .Params.specifications }}
+            <div>
+              <dt>{{ upper .label }}</dt>
+              <dd>{{ .value }}</dd>
+            </div>
+            {{ end }}
+          </dl>
+        </aside>
+        <div class="project-mission">
+          <div class="module-label">MISSION</div>
+          <div class="project-prose">{{ .Content }}</div>
+          {{ with .Params.links }}
+          <div class="project-links">
+            {{ range . }}<a href="{{ .url }}">{{ upper .label }} <span aria-hidden="true">-&gt;</span></a>{{ end }}
+          </div>
+          {{ end }}
+        </div>
+      </div>
+    </section>
+
+    {{ with .Params.system_flow }}
+    <section class="system-architecture">
+      <div class="section-control">
+        <span>SYSTEM ARCHITECTURE</span>
+        <span>FLOW / PRIMARY</span>
+      </div>
+      <div class="system-flow">
+        {{ range $index, $step := . }}
+        <div class="flow-step">
+          <span class="flow-index">{{ printf "%02d" (add $index 1) }}</span>
+          <span class="flow-name">{{ upper $step }}</span>
+        </div>
+        {{ end }}
+      </div>
+    </section>
+    {{ end }}
+
+    {{ with .Params.capabilities }}
+    <section class="capability-section">
+      <div class="section-control">
+        <span>CAPABILITIES</span>
+        <span>{{ len . }} MODULES</span>
+      </div>
+      <div class="capability-grid">
+        {{ range $index, $capability := . }}
+        <article class="capability-module">
+          <span class="capability-index">{{ printf "CAP-%02d" (add $index 1) }}</span>
+          <h2>{{ $capability.title }}</h2>
+          <p>{{ $capability.detail }}</p>
+        </article>
+        {{ end }}
+      </div>
+    </section>
+    {{ end }}
+
+    <section class="project-phase">
+      <div class="section-control">
+        <span>DEVELOPMENT STATUS</span>
+        <span>{{ .Params.status | upper }}</span>
+      </div>
+      <div class="phase-grid">
+        <div>
+          <span class="module-label">CURRENT PHASE</span>
+          <p>{{ .Params.current_phase }}</p>
+        </div>
+        <div>
+          <span class="module-label">NEXT DIRECTIVE</span>
+          <p>{{ .Params.next_step }}</p>
+        </div>
+      </div>
+    </section>
+  </article>
+{{ end }}

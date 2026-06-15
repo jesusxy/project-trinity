@@ -1,16 +1,58 @@
 ---
 title: "canon"
+layout: "canon"
 record_id: "REF-001"
 record_class: "reference"
 status: "permanent"
+description: "texts, people, and ideas that form the bedrock of how I work and why"
+references:
+  - id: "REF-A"
+    class: "principle"
+    title: "The street will find its own uses for technology"
+    source: "Timothy May"
+    format: "quotation"
+    emphasis: "signal"
+  - id: "REF-B"
+    class: "standard"
+    title: "I have offended God and mankind because my work did not reach the quality it should have."
+    source: "Leonardo da Vinci"
+    format: "quotation"
+    emphasis: "featured"
+  - id: "REF-C"
+    class: "systems"
+    title: "We disdained all existing software"
+    source: "The Evolution of the Unix Time-sharing System"
+    year: "1984"
+    format: "paper"
+    url: "https://www.read.seas.harvard.edu/~kohler/class/aosref/ritchie84evolution.pdf"
+  - id: "REF-D"
+    class: "cypherpunk"
+    title: "A Cypherpunk's Manifesto"
+    source: "Eric Hughes"
+    year: "1993"
+    format: "manifesto"
+    url: "https://www.activism.net/cypherpunk/manifesto.html"
+    emphasis: "featured"
+  - id: "REF-E"
+    class: "cypherpunk"
+    title: "The Crypto Anarchist Manifesto"
+    source: "Timothy May"
+    year: "1988"
+    format: "manifesto"
+    url: "https://www.activism.net/cypherpunk/crypto-anarchy.html"
+  - id: "REF-F"
+    class: "design"
+    title: "The Artist Is Absent"
+    source: "Martin Margiela"
+    format: "film"
+    url: "https://youtu.be/W0dPEYIMVtw?si=ws6afUkCXlQIBlxJ&t=365"
+  - id: "REF-G"
+    class: "faith"
+    title: "If it's a good idea, it's a God idea"
+    source: "Ye"
+    format: "interview"
+    url: "https://youtu.be/4AWLcxTGZPA?si=-e1Hf3N--wN5d3iu&t=7340"
+    emphasis: "signal"
 ---
 
-these are texts, people, and ideas that form the bedrock of how i work and why. not inspiration, more like obligations. the standard im trying to meet.
-
-- **_"The street will find its own uses for technology"_** — Timothy May
-- **_"I have offended God and mankind because my work did not reach the quality it should have."_** - Leonardo DaVinci
-- ["We disdained all existing software"](https://www.read.seas.harvard.edu/~kohler/class/aosref/ritchie84evolution.pdf) - The Evolution of the Unix Time-sharing System.pdf
-- [A Cypherpunk's Manifesto](https://www.activism.net/cypherpunk/manifesto.html) — Eric Hughes, 1993
-- [The Crypto Anarchist Manifesto](https://www.activism.net/cypherpunk/crypto-anarchy.html) — Timothy May, 1988
-- [The Artist Is Absent](https://youtu.be/W0dPEYIMVtw?si=ws6afUkCXlQIBlxJ&t=365) - Martin Margiela
-- ["If its a good idea, its a God idea"](https://youtu.be/4AWLcxTGZPA?si=-e1Hf3N--wN5d3iu&t=7340) - Ye
+Not inspiration, more like obligations. The standard I am trying to meet.

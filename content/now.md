@@ -1,21 +1,21 @@
 ---
 title: "now"
+layout: "now"
 record_id: "LOG-001"
 record_class: "field note"
 status: "active"
+updated: "2026-04"
+operations:
+  - category: "building"
+    status: "active"
+    subject: "loupe"
+    detail: "PE parsing, IAT patching, Unicorn Engine emulator scaffolding"
+  - category: "studying"
+    status: "active"
+    subject: "BlackMatter ransomware"
+    detail: "LCG-based encryption, embedded config extraction"
+  - category: "studying"
+    status: "active"
+    subject: "Windows internals"
+    detail: "architecture, execution, and operating system behavior"
 ---
-
-*last updated: 2026-04*
-
-**building**
-- loupe: PE parsing, IAT patching, Unicorn Engine emulator scaffolding
-
-**studying**
-- BlackMatter ransomware — LCG-based encryption, embedded config extraction
-- Windows internals
-
-**reading**
-- —
-
-**listening**
-- —

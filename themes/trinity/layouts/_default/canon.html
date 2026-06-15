@@ -1,0 +1,44 @@
+{{ define "main" }}
+  <article class="dossier canon-dossier">
+    <header class="dossier-header">
+      <div class="eyebrow">{{ .Params.record_id }} / PERMANENT REFERENCE SET</div>
+      <h1>{{ .Title }}</h1>
+      {{ with .Params.description }}<p class="dossier-deck">{{ . }}</p>{{ end }}
+      <div class="dossier-specs">
+        <span><b>RECORD</b> {{ .Params.record_id }}</span>
+        <span><b>STATUS</b> {{ .Params.status | upper }}</span>
+        <span><b>REFERENCES</b> {{ len .Params.references }}</span>
+        <span><b>CLASS</b> {{ .Params.record_class | upper }}</span>
+      </div>
+    </header>
+
+    <div class="canon-statement">{{ .Content }}</div>
+
+    <section class="reference-board">
+      <div class="section-control">
+        <span>REFERENCE BOARD / SELECTED SIGNALS</span>
+        <span>ORDER: ASSOCIATIVE</span>
+      </div>
+      <div class="reference-grid">
+        {{ range .Params.references }}
+        <article class="reference-card reference-{{ .emphasis | default "standard" }}">
+          <div class="reference-meta">
+            <span>{{ .id }}</span>
+            <span>{{ upper .class }}</span>
+          </div>
+          <div class="reference-body">
+            <span class="reference-format">{{ upper .format }}{{ with .year }} / {{ . }}{{ end }}</span>
+            <h2>
+              {{ with .url }}<a href="{{ . }}">{{ end }}
+              {{ .title }}
+              {{ with .url }}</a>{{ end }}
+            </h2>
+            <p>{{ .source }}</p>
+          </div>
+          <div class="reference-mark" aria-hidden="true"></div>
+        </article>
+        {{ end }}
+      </div>
+    </section>
+  </article>
+{{ end }}

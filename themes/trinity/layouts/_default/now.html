@@ -1,0 +1,35 @@
+{{ define "main" }}
+  <article class="dossier now-dossier">
+    <header class="dossier-header">
+      <div class="eyebrow">{{ .Params.record_id }} / {{ .Params.record_class | upper }}</div>
+      <h1>{{ .Title }}</h1>
+      <div class="dossier-specs">
+        <span><b>RECORD</b> {{ .Params.record_id }}</span>
+        <span><b>STATUS</b> {{ .Params.status | upper }}</span>
+        <span><b>UPDATED</b> {{ .Params.updated }}</span>
+        <span><b>CLASS</b> {{ .Params.record_class | upper }}</span>
+      </div>
+    </header>
+
+    <section class="operations-board">
+      <div class="section-control">
+        <span>CURRENT OPERATIONS</span>
+        <span>{{ len .Params.operations }} RECORDS</span>
+      </div>
+      <div class="operation-row operation-head" aria-hidden="true">
+        <span>AREA</span>
+        <span>STATUS</span>
+        <span>SUBJECT</span>
+        <span>DETAIL</span>
+      </div>
+      {{ range .Params.operations }}
+      <article class="operation-row">
+        <span class="operation-category">{{ upper .category }}</span>
+        <span class="operation-status status-{{ .status }}">{{ upper .status }}</span>
+        <span class="operation-subject">{{ .subject }}</span>
+        <span class="operation-detail">{{ .detail }}</span>
+      </article>
+      {{ end }}
+    </section>
+  </article>
+{{ end }}
