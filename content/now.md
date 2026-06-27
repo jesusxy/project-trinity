@@ -5,6 +5,9 @@ record_id: "LOG-001"
 record_class: "field note"
 status: "active"
 updated: "2026-04"
+exclude_recent: true
+build:
+  list: never
 operations:
   - category: "building"
     status: "active"
