@@ -1,7 +1,7 @@
 {{ define "main" }}
   <section class="hero">
     <div class="hero-copy">
-      <div class="eyebrow">INDEPENDENT RESEARCH ARCHIVE / FILE 000</div>
+      <div class="eyebrow">PUBLIC FIELD TERMINAL / FILE 000</div>
       {{ .Content }}
     </div>
     <figure class="hero-media">
@@ -11,7 +11,7 @@
         <span class="frame-corner frame-corner-br"></span>
       </div>
       <figcaption class="spec-grid">
-        <span><b>SYSTEM</b> THERMO-OPTIC CAMOUFLAGE</span>
+        <span><b>MODE</b> THERMO-OPTIC CAMOUFLAGE</span>
         <span><b>FUNCTION</b> CONCEALMENT / EVASION</span>
         <span><b>THEME</b> IDENTITY / ANONYMITY</span>
         <span><b>SOURCE</b> GHOST IN THE SHELL, 1995</span>
@@ -23,11 +23,13 @@
     <div class="operator-rail">
       <span>OPERATOR PROFILE</span>
       <span>OPR-001</span>
+      <span>AFFILIATION: PROJECT TRINITY</span>
+      <span>CLEARANCE: PUBLIC</span>
       <span>STATUS: ACTIVE</span>
     </div>
     <div class="operator-profile">
       <div class="operator-identity">
-        <span class="module-label">SUBJECT / CURATOR</span>
+        <span class="module-label">SUBJECT / PUBLIC PROFILE</span>
         <h2 id="operator-title">jesus chavez</h2>
         <p>software engineer focused on security research, malware analysis, and low-level systems.</p>
       </div>
@@ -56,11 +58,11 @@
   {{ with $now }}
   <section class="operations-board home-operations">
     <div class="section-control">
-      <span>CURRENT OPERATIONS</span>
-      <span>{{ len .Params.operations }} ACTIVE RECORDS</span>
+      <span>CURRENT OPERATIONS / FIELD QUEUE</span>
+      <span>{{ len .Params.operations }} ACTIVE TASKS</span>
     </div>
     <div class="operation-row operation-head" aria-hidden="true">
-      <span>AREA</span>
+      <span>PHASE</span>
       <span>STATUS</span>
       <span>SUBJECT</span>
       <span>DETAIL</span>
@@ -81,7 +83,7 @@
   <section class="archive-section">
     <div class="section-control">
       <span>INDEX / RECENT RECORDS</span>
-      <span>{{ len $recent }} FILES IN ARCHIVE</span>
+      <span>{{ len $recent }} PUBLIC RECORDS</span>
     </div>
     <div class="record-table">
       <div class="record-row record-head" aria-hidden="true">
