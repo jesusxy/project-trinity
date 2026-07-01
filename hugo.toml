@@ -4,7 +4,7 @@ title = "project trinity"
 theme = "trinity"
 
 [params]
-  description = "Project Trinity is an independent security research archive focused on malware analysis, systems security, adversarial infrastructure, and the culture of cyber conflict."
+  description = "Project Trinity is an independent security research archive focused on malware analysis, systems security, adversarial infrastructure, and the art of cyberwarfare."
 
 [menu]
   [[menu.main]]
