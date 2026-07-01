@@ -273,7 +273,7 @@ code {
 
 .page-home .hero-copy > p:first-of-type {
   color: var(--cobalt-dark);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.1em;
 }
