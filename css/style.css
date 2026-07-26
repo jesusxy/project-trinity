@@ -616,7 +616,6 @@ code {
 
 /* Dossiers and prose */
 .dossier {
-  max-width: 940px;
   margin: 0 auto;
 }
 
@@ -1068,23 +1067,21 @@ code {
 }
 
 /* Canon reference board */
-.canon-statement {
-  max-width: 880px;
-  margin: 34px 0 0;
-  font-family: var(--serif);
-  font-size: 22px;
-  font-style: italic;
-  line-height: 1.5;
-  text-wrap: balance;
-}
-
-.canon-statement p {
-  margin: 0;
-}
-
 .reference-board {
   border-right: 1px solid var(--line);
   border-left: 1px solid var(--line);
+}
+
+.reference-board-note {
+  margin: 0;
+  padding: 14px 18px;
+  color: var(--ink);
+  border-bottom: 1px solid var(--line);
+  background: var(--paper-bright);
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.55;
+  text-align: center;
 }
 
 .reference-grid {
@@ -1699,8 +1696,9 @@ code {
     min-height: 190px;
   }
 
-  .canon-statement {
-    font-size: 19px;
+  .reference-board-note {
+    padding: 12px 14px;
+    font-size: 11px;
   }
 
   .entry-rail {
