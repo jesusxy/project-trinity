@@ -12,13 +12,14 @@
       </div>
     </header>
 
-    <div class="canon-statement">{{ .Content }}</div>
-
     <section class="reference-board">
       <div class="section-control">
         <span>REFERENCE BOARD / SELECTED SIGNALS</span>
         <span>ORDER: ASSOCIATIVE</span>
       </div>
+      <p class="reference-board-note">
+        Not inspiration. More like obligations. The standard I am trying to meet.
+      </p>
       <div class="reference-grid">
         {{ range .Params.references }}
         <article class="reference-card reference-{{ .emphasis | default "standard" }}">
