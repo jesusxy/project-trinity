@@ -1,5 +1,6 @@
 ---
-title: "nox"
+title: "Nox"
+weight: 2
 date: 2025-01-01
 record_id: "PRJ-002"
 record_class: "software"

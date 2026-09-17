@@ -1,10 +1,10 @@
 ---
-title: "now"
+title: "Current notes"
 layout: "now"
 record_id: "LOG-001"
-record_class: "field note"
+record_class: "development note"
 status: "active"
-updated: "2026-07"
+updated: "2026-09-17"
 exclude_recent: true
 build:
   list: never
@@ -12,7 +12,7 @@ operations:
   - category: "building"
     status: "active"
     subject: "loupe"
-    detail: "Building PE parsing, import-table patching, and Unicorn-based emulation scaffolding."
+    detail: "Shared PE inspection core and a local browser interface. Native import patching and Unicorn emulation remain experimental."
   - category: "studying"
     status: "active"
     subject: "Process Injection"

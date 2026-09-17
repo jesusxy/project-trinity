@@ -1,21 +1,6 @@
-{{ $class := .Params.record_class | default .Section | default "note" }}
-{{ $recordID := .Params.record_id }}
-{{ if not $recordID }}
-  {{ if eq .Kind "term" }}
-    {{ $recordID = printf "TAG/%s" (upper .Title) }}
-  {{ else }}
-    {{ $recordID = printf "%s/INDEX" (upper (.Kind | default "tri")) }}
-  {{ end }}
-{{ end }}
 <article class="record-row">
-  <span class="record-id">{{ $recordID }}</span>
-  <span class="record-class">{{ upper $class }}</span>
-  <span class="record-subject">
-    <a href="{{ .Permalink }}">{{ .Title }}</a>
-    {{ with .Params.description }}<small>{{ . }}</small>{{ end }}
-  </span>
-  <span class="record-status">{{ .Params.status | default "FILED" | upper }}</span>
-  <time datetime="{{ if not .Date.IsZero }}{{ .Date.Format "2006-01-02" }}{{ end }}">
-    {{ if not .Date.IsZero }}{{ .Date.Format "2006-01-02" }}{{ else }}—{{ end }}
-  </time>
+  {{ with .Params.record_id }}<span class="record-id">{{ . }}</span>{{ end }}
+  <div class="record-subject"><h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>{{ with .Description }}<p>{{ . }}</p>{{ end }}</div>
+  <span class="record-status">{{ .Params.status }}{{ with .Params.revision }} / R{{ printf "%02d" (int .) }}{{ end }}</span>
+  <span aria-hidden="true">↗</span>
 </article>

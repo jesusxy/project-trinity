@@ -1,10 +1,10 @@
 {{ define "main" }}
-  <article class="dossier canon-dossier">
-    <header class="dossier-header">
+  <article class="record canon-record">
+    <header class="record-header">
       <div class="eyebrow">{{ .Params.record_id }} / PERMANENT REFERENCE SET</div>
       <h1>{{ .Title }}</h1>
-      {{ with .Params.description }}<p class="dossier-deck">{{ . }}</p>{{ end }}
-      <div class="dossier-specs">
+      {{ with .Params.description }}<p class="record-deck">{{ . }}</p>{{ end }}
+      <div class="record-specs">
         <span><b>RECORD</b> {{ .Params.record_id }}</span>
         <span><b>STATUS</b> {{ .Params.status | upper }}</span>
         <span><b>REFERENCES</b> {{ len .Params.references }}</span>
@@ -14,7 +14,7 @@
 
     <section class="reference-board">
       <div class="section-control">
-        <span>REFERENCE BOARD / INFLUENCES</span>
+        <span>PERMANENT REFERENCE SET</span>
         <span>ORDER: ASSOCIATIVE</span>
       </div>
       <p class="reference-board-note">
@@ -22,7 +22,7 @@
       </p>
       <div class="reference-grid">
         {{ range .Params.references }}
-        <article class="reference-card reference-{{ .emphasis | default "standard" }}">
+        <article id="{{ .id }}" class="reference-card reference-{{ .emphasis | default "standard" }}">
           <div class="reference-meta">
             <span>{{ .id }}</span>
             <span>{{ upper .class }}</span>
@@ -41,5 +41,6 @@
         {{ end }}
       </div>
     </section>
+    {{ partial "connections.html" . }}
   </article>
 {{ end }}

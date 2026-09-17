@@ -1,10 +1,10 @@
 {{ define "main" }}
-  <article class="dossier">
-    <header class="dossier-header">
-      <div class="eyebrow">{{ .Params.record_id | default "TRI-000" }} / {{ .Params.record_class | default "FIELD NOTE" | upper }}</div>
+  <article class="record">
+    <header class="record-header">
+      <div class="eyebrow">{{ .Params.record_id | default "TRI-000" }} / {{ .Params.record_class | default "NOTE" | upper }}</div>
       <h1>{{ .Title }}</h1>
-      {{ with .Params.description }}<p class="dossier-deck">{{ . }}</p>{{ end }}
-      <div class="dossier-specs">
+      {{ with .Params.description }}<p class="record-deck">{{ . }}</p>{{ end }}
+      <div class="record-specs">
         <span><b>RECORD</b> {{ .Params.record_id | default "TRI-000" }}</span>
         <span><b>STATUS</b> {{ .Params.status | default "FILED" | upper }}</span>
         <span><b>DATE</b> {{ if not .Date.IsZero }}{{ .Date.Format "2006-01-02" }}{{ else }}UNDATED{{ end }}</span>

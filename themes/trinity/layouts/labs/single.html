@@ -1,66 +1,24 @@
 {{ define "main" }}
-  <article class="dossier lab-dossier">
-    <header class="dossier-header">
-      <div class="eyebrow">{{ .Params.record_id | default "LAB-000" }} / MALWARE ANALYSIS RECORD</div>
+  <article class="record">
+    <header class="record-header">
+      <div class="eyebrow">{{ .Params.record_id | default "TRI-000" }} / {{ .Params.record_class | default "NOTE" | upper }}</div>
       <h1>{{ .Title }}</h1>
-      <p class="dossier-deck">{{ .Summary }}</p>
-      <div class="dossier-specs dossier-specs-lab">
-        <span><b>RECORD</b> {{ .Params.record_id | default "LAB-000" }}</span>
-        <span><b>STATUS</b> {{ .Params.status | default "ANALYSIS" | upper }}</span>
-        <span><b>DATE</b> {{ .Date.Format "2006-01-02" }}</span>
-        <span><b>FAMILY</b> {{ .Params.family | upper }}</span>
-        <span><b>TYPE</b> {{ .Params.malware_type | upper }}</span>
-        <span><b>THREAD</b> NO.{{ .Params.thread_id }}</span>
+      {{ with .Params.description }}<p class="record-deck">{{ . }}</p>{{ end }}
+      <div class="record-specs">
+        <span><b>RECORD</b> {{ .Params.record_id | default "TRI-000" }}</span>
+        <span><b>STATUS</b> {{ .Params.status | default "FILED" | upper }}</span>
+        <span><b>DATE</b> {{ if not .Date.IsZero }}{{ .Date.Format "2006-01-02" }}{{ else }}UNDATED{{ end }}</span>
+        <span><b>CLASS</b> {{ .Params.record_class | default .Section | default "GENERAL" | upper }}</span>
       </div>
-      <div class="hash-line"><b>SHA256</b><code>{{ .Params.sha256 }}</code></div>
     </header>
-
+    {{ with .Params.tags }}
     <div class="tag-strip">
       <span class="tag-label">INDEX TERMS</span>
-      {{ range .Params.tags }}<span class="tag">{{ . }}</span>{{ end }}
+      {{ range . }}<span class="tag">{{ . }}</span>{{ end }}
     </div>
-
-    <section class="analysis-log">
-      <div class="section-control">
-        <span>ANALYSIS LOG / PRIMARY</span>
-        <a href="{{ "labs/" | absURL }}">RETURN TO LABS</a>
-      </div>
-
-      <div class="analysis-entry analysis-primary" id="op">
-        <div class="entry-rail">
-          <span>NO.{{ .Params.thread_id }}</span>
-          <span>{{ .Date.Format "2006-01-02" }}</span>
-        </div>
-        <div class="entry-content">
-          {{ $image := .Params.image }}
-          {{ if and $image (fileExists (printf "static/%s" $image)) }}
-          <figure class="evidence">
-            <img src="{{ $image | absURL }}" alt="{{ .Title }} analysis evidence">
-            <figcaption>EVIDENCE / {{ $image }}</figcaption>
-          </figure>
-          {{ end }}
-          {{ .Content }}
-        </div>
-      </div>
-
-      {{ range .Params.replies }}
-      <div class="analysis-entry" id="p{{ .id }}">
-        <div class="entry-rail">
-          <span>NO.{{ .id }}</span>
-          <span>{{ .date }}</span>
-        </div>
-        <div class="entry-content">
-          {{ $replyImage := .image }}
-          {{ if and $replyImage (fileExists (printf "static/%s" $replyImage)) }}
-          <figure class="evidence">
-            <img src="{{ $replyImage | absURL }}" alt="Analysis evidence for entry {{ .id }}" loading="lazy">
-            <figcaption>EVIDENCE / {{ $replyImage }}</figcaption>
-          </figure>
-          {{ end }}
-          {{ .body | markdownify }}
-        </div>
-      </div>
-      {{ end }}
-    </section>
+    {{ end }}
+    <div class="article-content">
+    {{ .Content }}
+    </div>
   </article>
 {{ end }}

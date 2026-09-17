@@ -1,10 +1,10 @@
 {{ define "main" }}
-  <article class="dossier project-dossier">
-    <header class="dossier-header">
+  <article class="record project-record">
+    <header class="record-header">
       <div class="eyebrow">{{ .Params.record_id | default "PRJ-000" }} / {{ .Params.record_class | default "SOFTWARE" | upper }}</div>
       <h1>{{ .Title }}</h1>
-      {{ with .Params.description }}<p class="dossier-deck">{{ . }}</p>{{ end }}
-      <div class="dossier-specs">
+      {{ with .Params.description }}<p class="record-deck">{{ . }}</p>{{ end }}
+      <div class="record-specs">
         <span><b>RECORD</b> {{ .Params.record_id | default "PRJ-000" }}</span>
         <span><b>STATUS</b> {{ .Params.status | default "FILED" | upper }}</span>
         <span><b>STARTED</b> {{ .Date.Format "2006" }}</span>
@@ -36,7 +36,7 @@
             {{ end }}
           </dl>
         </aside>
-        <div class="project-mission">
+        <div class="project-overview">
           <div class="module-label">OVERVIEW</div>
           <div class="project-prose">{{ .Content }}</div>
           {{ with .Params.links }}
@@ -48,6 +48,7 @@
       </div>
     </section>
 
+    {{ if eq .Params.record_id "PRJ-001" }}<section class="project-architecture"><h2>Architecture</h2>{{ partial "loupe-diagram.html" . }}</section>{{ end }}
     {{ with .Params.system_flow }}
     <section class="system-architecture">
       <div class="section-control">
@@ -68,16 +69,16 @@
     {{ with .Params.capabilities }}
     <section class="capability-section">
       <div class="section-control">
-        <span>CAPABILITIES</span>
-        <span>{{ len . }} MODULES</span>
+        <span>CURRENT IMPLEMENTATION</span>
+        <span>{{ len . }} AREAS</span>
       </div>
       <div class="capability-grid">
         {{ range $index, $capability := . }}
         <article class="capability-module">
-          <span class="capability-index">{{ printf "CAP-%02d" (add $index 1) }}</span>
+          <span class="capability-index">{{ printf "%02d" (add $index 1) }}</span>
           <h2>{{ $capability.title }}</h2>
           <p>{{ $capability.detail }}</p>
-        </article>
+              </article>
         {{ end }}
       </div>
     </section>
@@ -99,5 +100,7 @@
         </div>
       </div>
     </section>
+    {{ partial "connections.html" . }}
+    {{ with .Params.lab }}<a class="lab-transition" href="{{ . | relURL }}"><span>PRJ-001 / LOUPE IN THE BROWSER</span><strong>Run Loupe →</strong><span>Inspect a PE file locally</span></a>{{ end }}
   </article>
 {{ end }}

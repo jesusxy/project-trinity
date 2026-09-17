@@ -1,100 +1,22 @@
 {{ define "main" }}
-  <section class="hero">
-    <div class="hero-copy">
-      <div class="eyebrow">ARCHIVE / FILE 000</div>
-      {{ .Content }}
-    </div>
-    <figure class="hero-media">
-      <div class="media-frame">
-        <img src="{{ "img/7XVIGXO.gif" | absURL }}" alt="Ghost in the Shell animation">
-        <span class="frame-corner frame-corner-tl"></span>
-        <span class="frame-corner frame-corner-br"></span>
-      </div>
-      <figcaption class="spec-grid">
-        <span><b>MODE</b> THERMO-OPTIC CAMOUFLAGE</span>
-        <span><b>FUNCTION</b> CONCEALMENT / EVASION</span>
-        <span><b>THEME</b> IDENTITY / ANONYMITY</span>
-        <span><b>SOURCE</b> GHOST IN THE SHELL, 1995</span>
-      </figcaption>
-    </figure>
-  </section>
-
-  <section class="operator-dossier" aria-labelledby="operator-title">
-    <div class="operator-rail">
-      <span>MAINTAINER</span>
-      <span>OPR-001</span>
-      <span>PROJECT TRINITY</span>
-    </div>
-    <div class="operator-profile">
-      <div class="operator-identity">
-        <span class="module-label">RESEARCH / ENGINEERING</span>
-        <h2 id="operator-title">jesus chavez</h2>
-        <p>software engineer focused on security research, malware analysis, and low-level systems.</p>
-      </div>
-      <dl class="operator-meta">
-        <div>
-          <dt>BACKGROUND</dt>
-          <dd>backend / distributed systems at John Deere Financial and Fubo Gaming</dd>
-        </div>
-        <div>
-          <dt>FOCUS</dt>
-          <dd>malware analysis, systems security, cyber conflict, low-level systems</dd>
-        </div>
-        <div>
-          <dt>INTERESTS</dt>
-          <dd>math, computer architecture, theology, jazz, house music, film, physical media, f1</dd>
-        </div>
-      </dl>
-      <div class="operator-contact" aria-label="Maintainer links">
-        <a href="https://github.com/jesusxy">GITHUB: jesusxy</a>
-        <a href="https://linkedin.com/in/jesuschvz">LINKEDIN: jesuschvz</a>
-      </div>
-    </div>
-  </section>
-
-  {{ $now := .Site.GetPage "now" }}
-  {{ with $now }}
-  <section class="operations-board home-operations">
-    <div class="section-control">
-      <span>CURRENT WORK</span>
-      <span>{{ len .Params.operations }} ACTIVE TASKS</span>
-    </div>
-    <div class="operation-row operation-head" aria-hidden="true">
-      <span>AREA</span>
-      <span>STATUS</span>
-      <span>SUBJECT</span>
-      <span>DETAIL</span>
-    </div>
-    {{ range .Params.operations }}
-    <article class="operation-row">
-      <span class="operation-category">{{ upper .category }}</span>
-      <span class="operation-status status-{{ .status }}">{{ upper .status }}</span>
-      <span class="operation-subject">{{ .subject }}</span>
-      <span class="operation-detail">{{ .detail }}</span>
-    </article>
-    {{ end }}
-  </section>
-  {{ end }}
-
-  {{ $recent := where .Site.RegularPages ".Params.exclude_recent" "ne" true }}
-  {{ if $recent }}
-  <section class="archive-section">
-    <div class="section-control">
-      <span>INDEX / RECENT RECORDS</span>
-      <span>{{ len $recent }} PUBLIC RECORDS</span>
-    </div>
-    <div class="record-table">
-      <div class="record-row record-head" aria-hidden="true">
-        <span>ID</span>
-        <span>CLASS</span>
-        <span>SUBJECT</span>
-        <span>STATUS</span>
-        <span>DATE</span>
-      </div>
-      {{ range first 10 $recent.ByDate.Reverse }}
-        {{ partial "record-row.html" . }}
-      {{ end }}
-    </div>
-  </section>
-  {{ end }}
+<section class="studio-hero">
+  <div class="hero-kicker"><span>INDEPENDENT EXPERIMENTAL ENGINEERING</span><span>SYSTEMS / SOFTWARE / RESEARCH</span></div>
+  <h1>PROJECT<br><span>TRINITY</span><sup>Ⅲ</sup></h1>
+  <div class="hero-bottom"><p>A small systems laboratory.<br>Built from the inside out.</p><div>{{ .Content }}</div></div>
+</section>
+<section class="selected-work" aria-labelledby="selected-title">
+  <div class="section-control"><h2 id="selected-title">01 / Selected work</h2><a href="{{ "projects/" | relURL }}">Work index ↗</a></div>
+  <div class="featured-project">
+    <div class="featured-copy"><p class="eyebrow">PRJ-001 / ACTIVE DEVELOPMENT</p><h3><a href="{{ "projects/loupe/" | relURL }}">Loupe</a></h3><p class="large-copy">Looking inside<br>Windows executables.</p><p>A Go-based study of PE structure and emulated execution. Start with the architecture, or inspect a file with its static core.</p><div class="text-links"><a href="{{ "projects/loupe/" | relURL }}">Explore the project ↗</a><a class="button" href="{{ "labs/" | relURL }}">Run Loupe <span aria-hidden="true">→</span></a></div></div>
+    {{ partial "loupe-diagram.html" . }}
+  </div>
+  {{ with .Site.GetPage "/projects/nox" }}<a class="secondary-work" href="{{ .RelPermalink }}"><span class="eyebrow">{{ .Params.record_id }}</span><strong>Nox</strong><span>Stateful detection / Go / MITRE ATT&amp;CK</span><span aria-hidden="true">↗</span></a>{{ end }}
+</section>
+<section class="research-preview" aria-labelledby="research-title">
+  <div class="section-control"><h2 id="research-title">02 / Research records</h2><a href="{{ "research/" | relURL }}">Research index ↗</a></div>
+  <div class="research-intro"><p class="large-copy">Notes that stay<br>open to revision.</p><p>Implementation, explanation, and the connections between them. These records grow alongside the work.</p></div>
+  {{ range (where .Site.RegularPages "Section" "research").ByTitle }}{{ partial "record-row.html" . }}{{ end }}
+</section>
+<section class="canon-preview"><div><p class="eyebrow">03 / PERMANENT REFERENCE SET</p><h2><a href="{{ "canon/" | relURL }}">Canon <span aria-hidden="true">↗</span></a></h2></div><p>Not inspiration. More like obligations.<br>The standard I am trying to meet.</p></section>
+<section class="maintainer"><p>Project Trinity is the independent work of <strong>Jesus Chavez</strong>, a software engineer studying systems, reverse engineering, and security.</p><p>Previously: backend and distributed systems at John Deere Financial and Fubo Gaming.</p><div class="text-links"><a href="https://github.com/jesusxy">GitHub ↗</a><a href="https://linkedin.com/in/jesuschvz">LinkedIn ↗</a><a href="{{ "now/" | relURL }}">Current notes ↗</a></div></section>
 {{ end }}

@@ -1,0 +1,7 @@
+{{ with hugo.Data.build }}
+<dl class="build-meta" aria-label="Site build information">
+  {{ with .commit }}<div><dt>Source</dt><dd>{{ substr . 0 8 }}{{ if hugo.Data.build.dirty }} + local changes{{ end }}</dd></div>{{ end }}
+  <div><dt>Built</dt><dd><time datetime="{{ .built_at }}">{{ .built_at }}</time></dd></div>
+  {{ with .run_url }}<div><dt>Build run</dt><dd><a href="{{ . }}">{{ hugo.Data.build.run_id }}</a></dd></div>{{ end }}
+</dl>
+{{ end }}

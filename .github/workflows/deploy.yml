@@ -1,28 +1,59 @@
-name: Deploy to GitHub Pages
+name: Verify and deploy Trinity
 
 on:
   push:
-    branches:
-      - master
+    branches: [master]
+  pull_request:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.2'
+          cache: false
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
         with:
-          hugo-version: "latest"
+          hugo-version: '0.160.1'
           extended: true
-
-      - name: Build
-        run: hugo --minify
-
+      - name: Build and test the shared core
+        run: python3 scripts/build.py
+      - name: Verify generated site
+        run: python3 scripts/verify-site.py
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser test tools
+        run: |
+          npm install --no-save --prefix /tmp/trinity-browser playwright@1.62.1
+          /tmp/trinity-browser/node_modules/.bin/playwright install --with-deps chromium
+      - name: Browser integration and responsive checks
+        env:
+          PLAYWRIGHT_MODULE: /tmp/trinity-browser/node_modules/playwright
+        run: |
+          python3 -m http.server 1415 --bind 127.0.0.1 --directory public &
+          node tests/browser.cjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: static-site
+          path: public
+  deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: static-site
+          path: public
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
         with:

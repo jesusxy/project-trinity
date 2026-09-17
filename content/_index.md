@@ -1,12 +1,4 @@
 ---
-title: "project trinity"
+title: "Project Trinity"
 ---
-
-# PROJECT TRINITY
-
-**Independent Security Research Archive**
-
-Focused on malware analysis, systems security, adversarial infrastructure, and the art of cyberwarfare.
-
-Curated and maintained by Jesus Chavez, \
-software engineer focused on security research and low-level systems.
+Software, reverse engineering, and the structures underneath. A growing body of work, research, and references by Jesus Chavez.

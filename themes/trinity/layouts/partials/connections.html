@@ -1,0 +1,10 @@
+{{ $page := . }}
+{{ $related := slice }}
+{{ range .Params.related }}{{ $target := site.GetPage . }}{{ if not $target }}{{ errorf "Unresolved relation %q in %s" . $page.RelPermalink }}{{ else }}{{ $related = $related | append $target }}{{ end }}{{ end }}
+{{ $backlinks := slice }}
+{{ range site.RegularPages }}{{ if and (in (.Params.related | default slice) (strings.TrimSuffix "/" $page.RelPermalink)) (not (in $related .)) }}{{ $backlinks = $backlinks | append . }}{{ end }}{{ end }}
+{{ if or $related $backlinks }}
+<aside class="connections" aria-label="Connected records"><h2>Connections</h2>
+{{ with $related }}<p class="eyebrow">RELATED WORK &amp; REFERENCES</p><ul>{{ range . }}<li><a href="{{ .RelPermalink }}"><span>{{ .Params.record_id }}</span> {{ .Title }} ↗</a></li>{{ end }}</ul>{{ end }}
+{{ with $backlinks }}<p class="eyebrow">REFERENCED BY</p><ul>{{ range . }}<li><a href="{{ .RelPermalink }}"><span>{{ .Params.record_id }}</span> {{ .Title }} ↗</a></li>{{ end }}</ul>{{ end }}
+</aside>{{ end }}

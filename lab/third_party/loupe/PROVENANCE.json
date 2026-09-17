@@ -1,0 +1,8 @@
+{
+  "repository": "https://github.com/jesusxy/loupe",
+  "base_commit": "9439f51fc84946046d6755c76cddeed58ba401e8",
+  "source": "cmd/main.go: ImageInfo and parsePE",
+  "core_sha256": "1f5ac640d8d29bebd73b021ec191329d50835397567904ccf9611b5d242e45f7",
+  "note": "Shared-core extraction plus hostile-input preflight, committed locally in Loupe. Companion patch applies to base_commit; not an upstream release.",
+  "source_commit": "e129f1551b1e54178957d027b08d892bcd2da2ad"
+}

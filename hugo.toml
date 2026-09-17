@@ -2,20 +2,25 @@ baseURL = "https://project-trinity.io/"
 languageCode = "en-us"
 title = "project trinity"
 theme = "trinity"
+disableKinds = ["taxonomy", "term"]
 
 [params]
-  description = "Project Trinity is an independent security research archive focused on malware analysis, systems security, adversarial infrastructure, and the culture of cyber conflict."
+  description = "Project Trinity is an independent experimental engineering studio. Systems, software, reverse engineering, and the ideas behind the work."
 
 [menu]
   [[menu.main]]
-    name = "canon"
-    url = "/canon/"
+    name = "Work"
+    url = "/projects/"
     weight = 1
   [[menu.main]]
-    name = "labs"
-    url = "/labs/"
+    name = "Research"
+    url = "/research/"
     weight = 2
   [[menu.main]]
-    name = "projects"
-    url = "/projects/"
+    name = "Lab"
+    url = "/labs/"
     weight = 3
+  [[menu.main]]
+    name = "Canon"
+    url = "/canon/"
+    weight = 4

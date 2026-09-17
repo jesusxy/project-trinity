@@ -1,4 +1,5 @@
 ---
-title: "projects"
+title: "Work"
+aliases: ["/tags/", "/tags/go/", "/tags/mitre/", "/tags/ids/", "/tags/malware-analysis/", "/tags/unicorn/", "/tags/detection/", "/categories/"]
 ---
-things i've built or am building.
+Software and systems, from implementation to experiment.

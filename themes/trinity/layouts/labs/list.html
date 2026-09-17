@@ -1,30 +1,19 @@
+{{ define "head" }}
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self'; connect-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+{{ end }}
 {{ define "main" }}
-  <header class="page-header">
-    <div class="eyebrow">TECHNICAL RECORDS / MALWARE &amp; SECURITY</div>
-    <h1>/labs/</h1>
-    <div class="page-deck">{{ .Content }}</div>
-    <div class="page-specs">
-      <span><b>CLASS</b> ANALYSIS</span>
-      <span><b>RECORDS</b> {{ len .Pages }}</span>
-      <span><b>VISIBILITY</b> PUBLIC</span>
-    </div>
-  </header>
-  <section class="archive-section">
-    <div class="section-control">
-      <span>LABS / RECORD INDEX</span>
-      <span>SORT: DATE DESC</span>
-    </div>
-    <div class="record-table">
-      <div class="record-row record-head" aria-hidden="true">
-        <span>ID</span>
-        <span>CLASS</span>
-        <span>SUBJECT</span>
-        <span>STATUS</span>
-        <span>DATE</span>
-      </div>
-      {{ range .Pages.ByDate.Reverse }}
-        {{ partial "record-row.html" . }}
-      {{ end }}
-    </div>
-  </section>
+<header class="lab-header"><div><p class="eyebrow">LAB-001 / PRJ-001 / LIVE</p><h1>Loupe</h1></div><div><p class="page-deck">A closer look at<br>the executable.</p><a href="{{ "projects/loupe/" | relURL }}">Project, architecture &amp; development notes ↗</a></div></header>
+<div class="lab-spec"><span>ENGINE / LOUPE</span><span>PROCESSING / LOCAL</span><span>MODE / STATIC INSPECTION</span></div>
+{{ $worker := resources.Get "js/loupe-worker.js" | minify | fingerprint }}
+{{ $runtime := resources.Get "generated/wasm_exec.js" | minify | fingerprint }}
+{{ $wasm := resources.Get "generated/loupe.wasm" | fingerprint }}
+<section class="loupe-workbench" aria-label="Loupe PE inspector" data-loupe data-worker="{{ $worker.RelPermalink }}" data-runtime="{{ $runtime.RelPermalink }}" data-wasm="{{ $wasm.RelPermalink }}" data-research="{{ "research/pe-address-spaces/" | relURL }}">
+  <div class="drop-zone"><div><p class="eyebrow">01 / INSPECT A FILE</p><h2>Drop a PE file here.</h2><p>Windows executables and libraries.<br>x86 PE32 or x86-64 PE32+ · Up to 16 MiB.</p></div><div class="file-select"><label for="pe-file">Or select a local file</label><input id="pe-file" type="file" aria-describedby="file-privacy" accept=".exe,.dll,.sys,.scr,.cpl,.ocx"><p id="file-privacy">The binary stays in this browser.<br>It is read, never executed or uploaded.</p></div></div>
+  <noscript><p class="noscript-note">Loupe needs JavaScript and WebAssembly to inspect files locally. The <a href="{{ "projects/loupe/" | relURL }}">project documentation</a> is available without them.</p></noscript>
+  <div class="lab-status-line"><p role="status" aria-live="polite" aria-atomic="true">Ready for a file. The engine loads when you select one.</p><button type="button" data-clear hidden>Clear / cancel</button></div>
+  <section id="inspection" aria-label="Inspection result" hidden></section>
+</section>
+<section class="lab-note"><div><h2>Structure, before behavior.</h2><p>Read the headers and explore individual sections: addresses, sizes, declared permissions, and a small hex preview.</p></div><div><p>This is Loupe’s static inspection core, compiled from Go to WebAssembly. Unusual or malformed structures may be rejected. Results describe the file; they are not a malware verdict.</p><a href="{{ "research/static-inspection/" | relURL }}">Read about the inspection boundary ↗</a></div></section>
+{{ partial "connections.html" . }}
+{{ $script := resources.Get "js/loupe.js" | minify | fingerprint }}<script src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}" defer></script>
 {{ end }}

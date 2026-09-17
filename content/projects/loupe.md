@@ -1,40 +1,39 @@
 ---
-title: "loupe"
+title: "Loupe"
 date: 2026-01-01
+weight: 1
 record_id: "PRJ-001"
 record_class: "software"
-status: "active"
-description: "emulation-based malware deobfuscator and unpacker"
-tags: ["go", "unicorn", "malware-analysis"]
+status: "active development"
+description: "PE inspection and an experimental emulation environment"
+tags: ["Go", "Unicorn", "PE / x86–64"]
+lab: "/labs/"
+related: ["/research/pe-address-spaces", "/research/static-inspection"]
 specifications:
   - label: "language"
     value: "Go"
-  - label: "engine"
-    value: "Unicorn Engine"
+  - label: "native engine"
+    value: "Unicorn"
   - label: "target"
-    value: "Windows PE"
-  - label: "method"
-    value: "CPU emulation"
-system_flow:
-  - "PE input"
-  - "parser"
-  - "IAT patcher"
-  - "emulation harness"
-  - "unpacked output"
+    value: "x86 / x86-64 PE"
+  - label: "browser"
+    value: "Static inspection / WASM"
 capabilities:
-  - title: "inspect"
-    detail: "Parse PE headers, sections, imports, and execution context before emulation."
-  - title: "instrument"
-    detail: "Patch imports and intercept behavior inside a controlled Unicorn Engine harness."
-  - title: "recover"
-    detail: "Observe execution and extract a cleaner artifact for further analysis."
-current_phase: "Building the emulator scaffold and establishing reliable import-address-table patching."
-next_step: "Run the first complete sample through the parse, patch, emulate, and recover pipeline."
+  - title: "Inspect"
+    detail: "Read PE headers, preferred image addresses, and section descriptors. The shared Go core powers the native loader and the browser Lab."
+  - title: "Map"
+    detail: "The native CLI maps headers and selected sections into Unicorn memory. This is experimental loader code, not a complete Windows environment."
+  - title: "Instrument"
+    detail: "The native harness contains architecture-aware IAT patching and instruction, memory, and API hooks. These are development scaffolding; the Lab does not run them."
+current_phase: "Static inspection is available in the browser. Native emulation remains experimental, with incomplete Windows API and process-environment behavior."
+next_step: "Test the native loader and API stubs against controlled fixtures before exposing execution results. Reliable unpacked-output recovery is a future goal."
 links:
   - label: "source repository"
     url: "https://github.com/jesusxy/loupe"
 ---
 
-Loupe is an emulation-based malware deobfuscator and unpacker. It is designed to let suspicious code reveal itself inside an instrumented environment without granting it control of a complete operating system.
+Loupe is an investigation into how a Windows executable is structured, loaded, and eventually observed. Its long-term aim is emulation-based deobfuscation and unpacking.
 
-The project is also a practical study of Portable Executable internals, low-level execution, and the boundary between static and dynamic malware analysis.
+The current implementation starts with a Portable Executable parser and a Unicorn-based execution harness. It is also a practical study of the boundary between file bytes, virtual memory, and program behavior.
+
+The browser Lab exposes one complete part of that work: **static inspection**. It uses Loupe’s shared image model to read a file’s structure without running it. No emulation, malware verdicts, or recovered payloads are implied by those results.
