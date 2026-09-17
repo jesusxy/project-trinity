@@ -1,7 +1,7 @@
 {{ define "main" }}
   <section class="hero">
     <div class="hero-copy">
-      <div class="eyebrow">PUBLIC FIELD TERMINAL / FILE 000</div>
+      <div class="eyebrow">ARCHIVE / FILE 000</div>
       {{ .Content }}
     </div>
     <figure class="hero-media">
@@ -21,15 +21,13 @@
 
   <section class="operator-dossier" aria-labelledby="operator-title">
     <div class="operator-rail">
-      <span>OPERATOR PROFILE</span>
+      <span>MAINTAINER</span>
       <span>OPR-001</span>
-      <span>AFFILIATION: PROJECT TRINITY</span>
-      <span>CLEARANCE: PUBLIC</span>
-      <span>STATUS: ACTIVE</span>
+      <span>PROJECT TRINITY</span>
     </div>
     <div class="operator-profile">
       <div class="operator-identity">
-        <span class="module-label">SUBJECT / PUBLIC PROFILE</span>
+        <span class="module-label">RESEARCH / ENGINEERING</span>
         <h2 id="operator-title">jesus chavez</h2>
         <p>software engineer focused on security research, malware analysis, and low-level systems.</p>
       </div>
@@ -47,7 +45,7 @@
           <dd>math, computer architecture, theology, jazz, house music, film, physical media, f1</dd>
         </div>
       </dl>
-      <div class="operator-contact" aria-label="Operator links">
+      <div class="operator-contact" aria-label="Maintainer links">
         <a href="https://github.com/jesusxy">GITHUB: jesusxy</a>
         <a href="https://linkedin.com/in/jesuschvz">LINKEDIN: jesuschvz</a>
       </div>
@@ -58,11 +56,11 @@
   {{ with $now }}
   <section class="operations-board home-operations">
     <div class="section-control">
-      <span>CURRENT OPERATIONS / FIELD QUEUE</span>
+      <span>CURRENT WORK</span>
       <span>{{ len .Params.operations }} ACTIVE TASKS</span>
     </div>
     <div class="operation-row operation-head" aria-hidden="true">
-      <span>PHASE</span>
+      <span>AREA</span>
       <span>STATUS</span>
       <span>SUBJECT</span>
       <span>DETAIL</span>

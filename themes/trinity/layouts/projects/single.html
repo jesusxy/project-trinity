@@ -1,13 +1,13 @@
 {{ define "main" }}
   <article class="dossier project-dossier">
     <header class="dossier-header">
-      <div class="eyebrow">{{ .Params.record_id | default "PRJ-000" }} / ENGINEERING BRIEF</div>
+      <div class="eyebrow">{{ .Params.record_id | default "PRJ-000" }} / {{ .Params.record_class | default "SOFTWARE" | upper }}</div>
       <h1>{{ .Title }}</h1>
       {{ with .Params.description }}<p class="dossier-deck">{{ . }}</p>{{ end }}
       <div class="dossier-specs">
         <span><b>RECORD</b> {{ .Params.record_id | default "PRJ-000" }}</span>
         <span><b>STATUS</b> {{ .Params.status | default "FILED" | upper }}</span>
-        <span><b>INITIATED</b> {{ .Date.Format "2006" }}</span>
+        <span><b>STARTED</b> {{ .Date.Format "2006" }}</span>
         <span><b>CLASS</b> {{ .Params.record_class | default "SOFTWARE" | upper }}</span>
       </div>
     </header>
@@ -21,7 +21,7 @@
 
     <section class="project-brief">
       <div class="section-control">
-        <span>PROJECT DOSSIER / {{ upper .Title }}</span>
+        <span>PROJECT / {{ upper .Title }}</span>
         <span>{{ .Params.record_id }}</span>
       </div>
       <div class="project-brief-grid">
@@ -37,7 +37,7 @@
           </dl>
         </aside>
         <div class="project-mission">
-          <div class="module-label">MISSION</div>
+          <div class="module-label">OVERVIEW</div>
           <div class="project-prose">{{ .Content }}</div>
           {{ with .Params.links }}
           <div class="project-links">
@@ -90,11 +90,11 @@
       </div>
       <div class="phase-grid">
         <div>
-          <span class="module-label">CURRENT PHASE</span>
+          <span class="module-label">CURRENT STATUS</span>
           <p>{{ .Params.current_phase }}</p>
         </div>
         <div>
-          <span class="module-label">NEXT DIRECTIVE</span>
+          <span class="module-label">NEXT STEPS</span>
           <p>{{ .Params.next_step }}</p>
         </div>
       </div>
