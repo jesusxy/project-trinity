@@ -9,7 +9,7 @@
 .work-index .work-heading .eyebrow { margin-bottom: 28px; }
 .work-index .work-heading-title { display: flex; align-items: flex-start; gap: 26px; }
 .work-index .work-heading h1 {
-  font: 600 160px/.85 var(--type-interface);
+  font: 600 88px/.85 var(--type-interface);
   letter-spacing: -.06em;
   text-transform: uppercase;
   margin: 0;
