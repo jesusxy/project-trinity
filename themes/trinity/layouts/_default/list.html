@@ -1,4 +1,4 @@
 {{ define "main" }}
-<header class="page-header"><p class="eyebrow">PROJECT TRINITY / {{ if eq .Section "projects" }}WORK INDEX{{ else }}RECORD INDEX{{ end }}</p><h1>{{ .Title }}</h1><div class="page-deck">{{ .Content }}</div></header>
-<section class="archive-section" aria-label="{{ .Title }} index">{{ range .Pages.ByWeight }}{{ partial "record-row.html" . }}{{ end }}</section>
+<header class="page-header index-header"><p class="eyebrow">PROJECT TRINITY / {{ if eq .Section "projects" }}WORK INDEX{{ else }}RECORD INDEX{{ end }}</p><h1>{{ .Title }}</h1><div class="page-deck">{{ .Content }}</div></header>
+<section class="archive-section index-records" aria-label="{{ .Title }} index">{{ range .Pages.ByWeight }}{{ partial "record-row.html" . }}{{ end }}</section>
 {{ end }}

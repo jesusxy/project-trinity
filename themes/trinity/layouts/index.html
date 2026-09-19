@@ -5,18 +5,20 @@
   <div class="hero-bottom"><p>A small systems laboratory.<br>Built from the inside out.</p><div>{{ .Content }}</div></div>
 </section>
 <section class="selected-work" aria-labelledby="selected-title">
-  <div class="section-control"><h2 id="selected-title">01 / Selected work</h2><a href="{{ "projects/" | relURL }}">Work index ↗</a></div>
+  <div class="section-control"><h2 id="selected-title">01 / Being built</h2><a href="{{ "projects/" | relURL }}">Work index ↗</a></div>
   <div class="featured-project">
-    <div class="featured-copy"><p class="eyebrow">PRJ-001 / ACTIVE DEVELOPMENT</p><h3><a href="{{ "projects/loupe/" | relURL }}">Loupe</a></h3><p class="large-copy">Looking inside<br>Windows executables.</p><p>A Go-based study of PE structure and emulated execution. Start with the architecture, or inspect a file with its static core.</p><div class="text-links"><a href="{{ "projects/loupe/" | relURL }}">Explore the project ↗</a><a class="button" href="{{ "labs/" | relURL }}">Run Loupe <span aria-hidden="true">→</span></a></div></div>
+    <div class="featured-copy"><p class="eyebrow">PRJ-001 / ACTIVE DEVELOPMENT</p><h3><a href="{{ "projects/loupe/" | relURL }}">Loupe</a></h3><p class="large-copy">Looking inside<br>Windows executables.</p><p>A Windows executable is a set of decisions written into bytes. Loupe is how I’m learning to read them.</p><div class="text-links"><a href="{{ "projects/loupe/" | relURL }}">Explore the project ↗</a><a class="button" href="{{ "labs/" | relURL }}">Run Loupe <span aria-hidden="true">→</span></a></div></div>
     {{ partial "loupe-diagram.html" . }}
   </div>
   {{ with .Site.GetPage "/projects/nox" }}<a class="secondary-work" href="{{ .RelPermalink }}"><span class="eyebrow">{{ .Params.record_id }}</span><strong>Nox</strong><span>Stateful detection / Go / MITRE ATT&amp;CK</span><span aria-hidden="true">↗</span></a>{{ end }}
 </section>
 <section class="research-preview" aria-labelledby="research-title">
-  <div class="section-control"><h2 id="research-title">02 / Research records</h2><a href="{{ "research/" | relURL }}">Research index ↗</a></div>
-  <div class="research-intro"><p class="large-copy">Notes that stay<br>open to revision.</p><p>Implementation, explanation, and the connections between them. These records grow alongside the work.</p></div>
+  <div class="section-control"><h2 id="research-title">02 / Being studied</h2><a href="{{ "research/" | relURL }}">Research index ↗</a></div>
+  <div class="research-intro"><p class="large-copy">Where does<br>this address live?</p><div class="study-equation"><code>VA <span>=</span> base <span>+</span> RVA</code><p>File bytes and virtual memory have different coordinates. A small distinction that the loader has to get right.</p><a href="{{ "research/pe-address-spaces/" | relURL }}">Follow the address model ↗</a></div></div>
   {{ range (where .Site.RegularPages "Section" "research").ByTitle }}{{ partial "record-row.html" . }}{{ end }}
 </section>
-<section class="canon-preview"><div><p class="eyebrow">03 / PERMANENT REFERENCE SET</p><h2><a href="{{ "canon/" | relURL }}">Canon <span aria-hidden="true">↗</span></a></h2></div><p>Not inspiration. More like obligations.<br>The standard I am trying to meet.</p></section>
+{{ with .Site.GetPage "/canon" }}
+<section class="canon-preview" aria-labelledby="canon-title"><div class="canon-preview-label"><p class="eyebrow">03 / PERMANENT REFERENCE SET</p><h2 id="canon-title"><a href="{{ .RelPermalink }}">Canon <span aria-hidden="true">↗</span></a></h2><p>Not inspiration. More like obligations.<br>The standard I am trying to meet.</p></div>{{ range where .Params.references "id" "REF-C" }}<figure class="canon-excerpt"><p class="eyebrow">{{ .id }} / {{ .year }}</p><blockquote><a href="{{ "canon/#REF-C" | relURL }}">{{ .title }}</a></blockquote><figcaption>{{ .source }}</figcaption></figure>{{ end }}</section>
+{{ end }}
 <section class="maintainer"><p>Project Trinity is the independent work of <strong>Jesus Chavez</strong>, a software engineer studying systems, reverse engineering, and security.</p><p>Previously: backend and distributed systems at John Deere Financial and Fubo Gaming.</p><div class="text-links"><a href="https://github.com/jesusxy">GitHub ↗</a><a href="https://linkedin.com/in/jesuschvz">LinkedIn ↗</a><a href="{{ "now/" | relURL }}">Current notes ↗</a></div></section>
 {{ end }}

@@ -1,46 +1,26 @@
 {{ define "main" }}
-  <article class="record canon-record">
-    <header class="record-header">
-      <div class="eyebrow">{{ .Params.record_id }} / PERMANENT REFERENCE SET</div>
-      <h1>{{ .Title }}</h1>
-      {{ with .Params.description }}<p class="record-deck">{{ . }}</p>{{ end }}
-      <div class="record-specs">
-        <span><b>RECORD</b> {{ .Params.record_id }}</span>
-        <span><b>STATUS</b> {{ .Params.status | upper }}</span>
-        <span><b>REFERENCES</b> {{ len .Params.references }}</span>
-        <span><b>CLASS</b> {{ .Params.record_class | upper }}</span>
-      </div>
-    </header>
-
-    <section class="reference-board">
-      <div class="section-control">
-        <span>PERMANENT REFERENCE SET</span>
-        <span>ORDER: ASSOCIATIVE</span>
-      </div>
-      <p class="reference-board-note">
-        Not inspiration. More like obligations. The standard I am trying to meet.
-      </p>
-      <div class="reference-grid">
-        {{ range .Params.references }}
-        <article id="{{ .id }}" class="reference-card reference-{{ .emphasis | default "standard" }}">
-          <div class="reference-meta">
-            <span>{{ .id }}</span>
-            <span>{{ upper .class }}</span>
-          </div>
-          <div class="reference-body">
-            <span class="reference-format">{{ upper .format }}{{ with .year }} / {{ . }}{{ end }}</span>
-            <h2>
-              {{ with .url }}<a href="{{ . }}">{{ end }}
-              {{ .title }}
-              {{ with .url }}</a>{{ end }}
-            </h2>
-            <p>{{ .source }}</p>
-          </div>
-          <div class="reference-mark" aria-hidden="true"></div>
-        </article>
-        {{ end }}
-      </div>
-    </section>
-    {{ partial "connections.html" . }}
-  </article>
+<article class="canon-record">
+  <header class="canon-header">
+    <p class="eyebrow">{{ .Params.record_id }} / PERMANENT REFERENCE SET</p>
+    <h1>{{ .Title }}</h1>
+    <p class="canon-conviction">Not inspiration. More like obligations. The standard I am trying to meet.</p>
+    {{ with .Params.description }}<p class="canon-description">{{ . }}</p>{{ end }}
+  </header>
+  <div class="reference-wall">
+    {{ range .Params.references }}
+    <article id="{{ .id }}" class="reference reference-{{ .id }} reference-{{ .format }}" aria-labelledby="title-{{ .id }}">
+      <div class="reference-meta"><span>{{ .id }} / {{ upper .class }}</span><span>{{ upper .format }}{{ with .year }} / {{ . }}{{ end }}</span></div>
+      {{ if eq .format "quotation" }}
+      <blockquote><h2 id="title-{{ .id }}">{{ .title }}</h2></blockquote>
+      {{ else }}
+      <h2 id="title-{{ .id }}">{{ with .url }}<a href="{{ . }}">{{ end }}{{ .title }}{{ with .url }}</a>{{ end }}</h2>
+      {{ end }}
+      <p class="reference-source">{{ .source }}</p>
+      {{ if eq .format "paper" }}<a class="reference-action" href="{{ .url }}">Read the paper ↗</a>{{ end }}
+      {{ if eq .format "film" }}<a class="reference-action" href="{{ .url }}">Watch the film ↗</a>{{ end }}
+    </article>
+    {{ end }}
+  </div>
+  {{ partial "connections.html" . }}
+</article>
 {{ end }}

@@ -69,3 +69,7 @@ Optional settings: `TRINITY_URL`, `CHROMIUM_PATH`, `TRINITY_QA`, and `LOUPE_FIXT
 GitHub Actions verifies pull requests and pushes to `master`. A push to `master` deploys the tested artifact with the existing GitHub Pages action and `project-trinity.io` CNAME. Hugo, Go, and browser test versions are pinned. No backend or upload endpoint exists.
 
 See [implementation notes](docs/implementation.md) for the design rationale, security boundary, measured weight, and next steps.
+
+## Visual authorship
+
+The [design-system notes](docs/design-system.md) define the three typographic voices and the page-specific compositions. Preserve the common system while letting real work and references determine each page’s character.

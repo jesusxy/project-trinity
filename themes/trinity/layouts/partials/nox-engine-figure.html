@@ -1,0 +1,13 @@
+<figure class="nox-engine-figure">
+  <figcaption><span class="eyebrow">ENGINE / EVALUATION ORDER</span><h2>One event.<br>Three ways to read it.</h2><p>From <code>Engine.EvaluateEvent</code>. Each stage can append alerts; the correlation rules also receive the alerts already collected.</p></figcaption>
+  <div class="nox-rule-flow">
+    <p class="nox-flow-type"><code>model.Event</code><span aria-hidden="true">↓</span></p>
+    <ol>
+      <li><span class="eyebrow">01 / STATELESS</span><h3>Match</h3><code>EvaluateYAMLRule</code><p>Event type + YAML conditions</p></li>
+      <li><span class="eyebrow">02 / STATEFUL</span><h3>Remember</h3><code>rule.Evaluate(event, e.state)</code><p>Event + shared state</p></li>
+      <li><span class="eyebrow">03 / CORRELATION</span><h3>Connect</h3><code>triggeredAlerts</code><p>Event + collected alerts + shared state</p></li>
+    </ol>
+    <p class="nox-flow-type"><span aria-hidden="true">↓</span><code>[]model.Alert</code></p>
+  </div>
+  <a class="artifact-source" href="https://github.com/jesusxy/bit-by-bit/blob/21253c44f7f000078517def21c42bf123fd250f4/nox/internal/rules/engine.go">internal/rules/engine.go · 21253c44 ↗</a>
+</figure>

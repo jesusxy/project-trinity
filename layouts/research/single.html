@@ -1,9 +1,9 @@
 {{ define "main" }}
-<article class="research-record">
+<article class="research-record research-{{ .File.ContentBaseName }}">
 <header class="page-header"><p class="eyebrow">{{ .Params.record_id }} / RESEARCH</p><h1>{{ .Title }}</h1><p class="page-deck">{{ .Description }}</p>
 <dl class="record-metadata"><div><dt>Created</dt><dd>{{ .Date.Format "2006-01-02" }}</dd></div><div><dt>Revised</dt><dd>{{ .Lastmod.Format "2006-01-02" }}</dd></div><div><dt>Revision</dt><dd>R{{ printf "%02d" (int .Params.revision) }}</dd></div><div><dt>Status</dt><dd>{{ .Params.status }}</dd></div></dl>
 </header>
-<div class="research-layout"><aside class="contents"><p class="eyebrow">IN THIS RECORD</p>{{ .TableOfContents }}</aside><div class="article-content">{{ .Content }}</div></div>
+<div class="research-layout"><aside class="contents"><div class="revision-marker"><span class="eyebrow">{{ .Params.record_id }}</span><span>R{{ printf "%02d" (int .Params.revision) }}</span><small class="eyebrow">{{ .Params.status }}</small></div><p class="eyebrow">IN THIS RECORD</p>{{ .TableOfContents }}</aside><div class="article-content">{{ .Content }}</div></div>
 {{ partial "connections.html" . }}
 <section class="revision-history"><h2>Revision history</h2><ol>{{ range .Params.revisions }}<li><span class="eyebrow">R{{ printf "%02d" (int .revision) }}</span> <time>{{ .date }}</time><span>{{ .note }}</span></li>{{ end }}</ol></section>
 </article>

@@ -1,4 +1,9 @@
-/* Trinity: paper, ink, cobalt. System fonts; no decorative asset requests. */
+/* Trinity: paper, ink, cobalt. Three semantic voices, using local system fonts.
+ * SYSTEM (mono): identifiers, dates, addresses, code, measurable state.
+ * INTERFACE (sans): navigation, prose, explanations, controls.
+ * EDITORIAL (serif): identity, quotations, culture, belief.
+ * Page-specific composition may change scale, never the meaning of these voices.
+ */
 :root {
   --paper:#f1f0e9;
   --bright:#faf9f4;
@@ -7,9 +12,9 @@
   --line:#c7c9c0;
   --cobalt:#164ee8;
   --cobalt-dark:#123fb8;
-  --mono:"SFMono-Regular",Consolas,"Liberation Mono",monospace;
-  --sans:Arial,Helvetica,sans-serif;
-  --serif:Georgia,"Times New Roman",serif;
+  --type-system:"SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  --type-interface:Arial,Helvetica,sans-serif;
+  --type-editorial:Georgia,"Times New Roman",serif;
 }
 * {
   box-sizing:border-box;
@@ -21,7 +26,7 @@ html {
 body {
   margin:0;
   color:var(--ink);
-  font:16px/1.6 var(--sans);
+  font:16px/1.6 var(--type-interface);
 }
 a {
   color:inherit;
@@ -61,7 +66,7 @@ h2,h3 {
   font-weight:500;
 }
 pre,code {
-  font-family:var(--mono);
+  font-family:var(--type-system);
 }
 [hidden] {
   display:none!important;
@@ -123,7 +128,7 @@ pre,code {
   padding-bottom:100px;
 }
 .eyebrow,.module-label,.section-control,.record-id,.record-status,.hero-kicker,.diagram-label,.diagram-index,.footer-control,.build-meta,.record-metadata,.record-specs,.tag-strip,.project-spec-panel dt,.flow-index,.capability-index,.revision-history time {
-  font:11px/1.6 var(--mono);
+  font:11px/1.6 var(--type-system);
   letter-spacing:.065em;
   text-transform:uppercase;
 }
@@ -143,7 +148,7 @@ pre,code {
   gap:20px;
 }
 .studio-hero h1 {
-  font:clamp(88px,11.7vw,166px)/.81 var(--serif);
+  font:clamp(88px,11.7vw,166px)/.81 var(--type-editorial);
   letter-spacing:-.075em;
   margin:56px 0 42px;
   position:relative;
@@ -152,7 +157,7 @@ pre,code {
   color:var(--cobalt);
 }
 .studio-hero h1 sup {
-  font:28px var(--sans);
+  font:28px var(--type-interface);
   vertical-align:top;
   display:inline-block;
   margin:12px 0 0 28px;
@@ -258,7 +263,7 @@ pre,code {
   font-size:27px;
 }
 .loupe-diagram small {
-  font:11px/1.7 var(--mono);
+  font:11px/1.7 var(--type-system);
 }
 .diagram-index {
   font-size:10px;
@@ -277,7 +282,7 @@ pre,code {
   gap:5px 12px;
 }
 .diagram-core strong {
-  font:25px var(--mono);
+  font:25px var(--type-system);
   letter-spacing:-.055em;
 }
 .diagram-core small {
@@ -306,7 +311,7 @@ pre,code {
 .loupe-diagram figcaption {
   border-top:1px solid #ffffff80;
   padding-top:18px;
-  font:11px/1.7 var(--mono);
+  font:11px/1.7 var(--type-system);
 }
 .secondary-work {
   display:grid;
@@ -379,7 +384,7 @@ pre,code {
   gap:40px;
 }
 .canon-preview h2 {
-  font:90px/.95 var(--serif);
+  font:90px/.95 var(--type-editorial);
   letter-spacing:-.065em;
   margin:40px 0 0;
 }
@@ -387,11 +392,11 @@ pre,code {
   text-decoration:none;
 }
 .canon-preview h2 span {
-  font:45px var(--sans);
+  font:45px var(--type-interface);
   color:var(--cobalt);
 }
 .canon-preview>p {
-  font:23px/1.5 var(--serif);
+  font:23px/1.5 var(--type-editorial);
   max-width:430px;
 }
 .maintainer {
@@ -408,7 +413,7 @@ pre,code {
   padding:65px 0 44px;
 }
 .page-header h1,.record-header h1 {
-  font:clamp(55px,7.8vw,108px)/.95 var(--serif);
+  font:clamp(55px,7.8vw,108px)/.95 var(--type-editorial);
   letter-spacing:-.06em;
   max-width:1050px;
   margin:26px 0;
@@ -470,7 +475,7 @@ pre,code {
   line-height:1.7;
 }
 .project-links {
-  font:11px var(--mono);
+  font:11px var(--type-system);
   margin-top:30px;
 }
 .project-architecture {
@@ -556,7 +561,7 @@ pre,code {
 }
 .connections a span {
   display:inline-block;
-  font:11px var(--mono);
+  font:11px var(--type-system);
   color:var(--cobalt-dark);
   margin-right:16px;
 }
@@ -575,68 +580,13 @@ pre,code {
   background:var(--cobalt-dark);
 }
 .lab-transition>span {
-  font:11px var(--mono);
+  font:11px var(--type-system);
 }
 .lab-transition strong {
   grid-row:span 2;
   font-weight:400;
   font-size:42px;
   letter-spacing:-.045em;
-}
-.reference-board-note {
-  font:23px var(--serif);
-  padding:30px 0;
-}
-.reference-grid {
-  display:grid;
-  grid-template-columns:repeat(6,1fr);
-  gap:0 36px;
-}
-.reference-card {
-  grid-column:span 3;
-  padding:26px 0 45px;
-  border-top:1px solid var(--line);
-}
-.reference-card:nth-child(3n) {
-  grid-column:span 2;
-}
-.reference-card:nth-child(3n+1) {
-  grid-column:span 4;
-}
-.reference-meta {
-  display:flex;
-  justify-content:space-between;
-  font:10px var(--mono);
-  color:var(--cobalt-dark);
-}
-.reference-format {
-  font:10px var(--mono);
-  color:var(--muted);
-  display:block;
-  margin:50px 0 16px;
-}
-.reference-body h2 {
-  font:34px/1.2 var(--serif);
-  letter-spacing:-.035em;
-  max-width:550px;
-}
-.reference-body h2 a {
-  text-decoration:none;
-}
-.reference-body h2 a:hover {
-  text-decoration:underline;
-}
-.reference-body p {
-  font-size:13px;
-}
-.reference-featured .reference-body h2 {
-  font-size:42px;
-}
-.reference-mark {
-  width:24px;
-  height:4px;
-  background:var(--cobalt);
-  margin-top:30px;
 }
 .research-layout {
   display:grid;
@@ -735,11 +685,11 @@ pre,code {
   font-size:14px;
 }
 .operation-head {
-  font:11px var(--mono);
+  font:11px var(--type-system);
   color:var(--muted);
 }
 .operation-category,.operation-status {
-  font:11px var(--mono);
+  font:11px var(--type-system);
   color:var(--cobalt-dark);
 }
 .operation-detail {
@@ -769,7 +719,7 @@ pre,code {
   display:flex;
   flex-wrap:wrap;
   gap:20px 45px;
-  font:11px var(--mono);
+  font:11px var(--type-system);
   text-transform:uppercase;
   border-top:1px solid var(--ink);
   padding:18px 0;
@@ -836,7 +786,7 @@ pre,code {
   min-height:45px;
 }
 .lab-status-line p {
-  font:12px/1.6 var(--mono);
+  font:12px/1.6 var(--type-system);
   margin:0;
 }
 .lab-status-line button {
@@ -889,12 +839,12 @@ pre,code {
   border-top:1px solid var(--line);
 }
 .inspection-meta dt {
-  font:10px/1.5 var(--mono);
+  font:10px/1.5 var(--type-system);
   color:var(--muted);
   text-transform:uppercase;
 }
 .inspection-meta dd {
-  font:14px/1.5 var(--mono);
+  font:14px/1.5 var(--type-system);
   margin:8px 0 0;
   overflow-wrap:anywhere;
 }
@@ -915,7 +865,7 @@ pre,code {
   display:none;
 }
 .section-name {
-  font:16px var(--mono);
+  font:16px var(--type-system);
   overflow-wrap:anywhere;
 }
 .section-name:before {
@@ -928,7 +878,7 @@ pre,code {
   content:"−";
 }
 .permissions,.section-size {
-  font:11px var(--mono);
+  font:11px var(--type-system);
 }
 .section-size {
   text-align:right;
@@ -945,7 +895,7 @@ pre,code {
   border:0;
 }
 .hex-preview {
-  font:12px/1.8 var(--mono);
+  font:12px/1.8 var(--type-system);
   overflow:auto;
   background:var(--ink);
   color:var(--paper);
@@ -993,11 +943,483 @@ pre,code {
   margin-top:60px;
 }
 .nika {
-  font:13px var(--serif);
+  font:13px var(--type-editorial);
   letter-spacing:.12em;
 }
 .footer-quote {
-  font:italic 16px var(--serif);
+  font:italic 16px var(--type-editorial);
+}
+/* Authored departures: a shared system, with room for each work's own material. */
+.section-control > a,
+.project-links {
+  font: 13px/1.5 var(--type-interface);
+  letter-spacing: 0;
+  text-transform: none;
+}
+.project-spec-panel dd {
+  font-family: var(--type-system);
+}
+.lab-status-line p {
+  font-family: var(--type-system);
+}
+.hero-bottom > p {
+  font-family: var(--type-editorial);
+  font-size: 34px;
+  line-height: 1.15;
+}
+.featured-copy {
+  align-self: end;
+  padding-bottom: 26px;
+}
+.featured-project > .loupe-diagram {
+  margin-top: -20px;
+}
+.research-intro {
+  grid-template-columns: .8fr 1.2fr;
+  margin: 40px 0 65px;
+  align-items: start;
+}
+.research-intro > .large-copy {
+  font: 46px/1.04 var(--type-editorial);
+  letter-spacing: -.045em;
+  margin-top: 70px;
+}
+.study-equation {
+  padding: 24px 0 0 30px;
+  border-left: 1px solid var(--ink);
+}
+.study-equation > code {
+  display: block;
+  font-size: clamp(24px, 3.2vw, 43px);
+  letter-spacing: -.07em;
+  white-space: nowrap;
+}
+.study-equation > code span {
+  color: var(--cobalt-dark);
+}
+.study-equation > p {
+  max-width: 370px;
+  margin: 26px 0 18px;
+  color: var(--muted);
+  font-size: 14px;
+}
+.study-equation > a {
+  font-size: 13px;
+}
+.canon-preview {
+  grid-template-columns: .8fr 1.2fr;
+  align-items: start;
+  gap: 80px;
+  padding-bottom: 30px;
+}
+.canon-preview-label > p:last-child {
+  max-width: 310px;
+  margin: 30px 0 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+.canon-excerpt {
+  margin-top: 88px;
+}
+.canon-excerpt blockquote {
+  font: 58px/1.04 var(--type-editorial);
+  letter-spacing: -.045em;
+  margin: 25px 0;
+}
+.canon-excerpt blockquote a {
+  text-decoration: none;
+}
+.canon-excerpt figcaption {
+  max-width: 300px;
+  font-size: 13px;
+}
+.maintainer {
+  margin-top: 85px;
+}
+/* Work index: two objects, not two interchangeable rows. */
+.section-projects.page-section .index-header {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  align-items: baseline;
+}
+.section-projects.page-section .index-header > .eyebrow {
+  grid-column: 1;
+}
+.section-projects.page-section .index-header > h1 {
+  grid-column: 2;
+  font-size: clamp(110px, 15vw, 200px);
+  margin-bottom: 12px;
+}
+.section-projects.page-section .index-header > .page-deck {
+  grid-column: 2;
+}
+.section-projects.page-section .index-records .record-row {
+  padding: 42px 0 60px;
+  grid-template-columns: 110px 1fr 150px 20px;
+}
+.section-projects.page-section .index-records .record-subject h2 {
+  font-size: clamp(52px, 7vw, 94px);
+  letter-spacing: -.065em;
+}
+.section-projects.page-section .index-records .record-row + .record-row {
+  margin-left: 17%;
+}
+/* Loupe's address expression is generated from its actual shared parser. */
+.project-loupe .record-header h1 {
+  font-family: var(--type-interface);
+  font-size: clamp(100px, 16vw, 220px);
+  letter-spacing: -.075em;
+}
+.project-nox .record-header {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  column-gap: 70px;
+  align-items: end;
+}
+.project-nox .record-header > .eyebrow {
+  grid-column: 1 / -1;
+}
+.project-nox .record-header h1 {
+  font-size: clamp(100px, 15vw, 205px);
+  margin: 15px 0 0;
+}
+.project-nox .record-deck {
+  margin-bottom: 8px;
+  max-width: 360px;
+}
+.project-nox .record-specs {
+  grid-column: 1 / -1;
+}
+.loupe-address-figure {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  column-gap: 65px;
+  border-top: 1px solid var(--ink);
+  padding: 32px 0 50px;
+  margin: 5px 0 35px;
+}
+.artifact-caption p {
+  font: 25px/1.25 var(--type-editorial);
+  margin-top: 32px;
+  max-width: 280px;
+}
+.address-expression {
+  font: clamp(24px, 4.3vw, 58px)/1.5 var(--type-system);
+  letter-spacing: -.075em;
+}
+.address-expression > span {
+  display: block;
+}
+.address-expression b {
+  font-weight: 400;
+  color: var(--cobalt-dark);
+}
+.loupe-address-figure pre {
+  grid-column: 2;
+  font: 12px/1.8 var(--type-system);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--muted);
+  margin: 20px 0 25px;
+}
+.loupe-address-figure figcaption {
+  grid-column: 2;
+  display: grid;
+  gap: 8px;
+  font-size: 13px;
+}
+/* Nox: the implemented evaluation order, without invented event output. */
+.nox-engine-figure {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 24px 65px;
+  padding: 36px 0 50px;
+  margin: 0 0 40px;
+  border-top: 1px solid var(--ink);
+}
+.nox-engine-figure h2 {
+  font: 42px/1.08 var(--type-interface);
+  letter-spacing: -.045em;
+  margin: 38px 0 22px;
+}
+.nox-engine-figure figcaption > p {
+  color: var(--muted);
+  font-size: 14px;
+  max-width: 320px;
+}
+.nox-engine-figure figcaption code {
+  font-size: 12px;
+}
+.nox-rule-flow {
+  padding: 26px 32px;
+  background: var(--ink);
+  color: var(--paper);
+}
+.nox-flow-type {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin: 0;
+}
+.nox-flow-type:last-child {
+  margin-top: 20px;
+}
+.nox-rule-flow ol {
+  list-style: none;
+  padding: 0;
+  margin: 22px 0;
+}
+.nox-rule-flow li {
+  border-top: 1px solid #666c70;
+  padding: 22px 0;
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 12px 24px;
+  align-items: baseline;
+}
+.nox-rule-flow .eyebrow {
+  color: var(--paper);
+  grid-column: 1 / -1;
+  font-size: 10px;
+}
+.nox-rule-flow h3 {
+  font-size: 43px;
+  letter-spacing: -.045em;
+  margin: 0;
+}
+.nox-rule-flow li code {
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+.nox-rule-flow li p {
+  grid-column: 2;
+  font-size: 12px;
+  margin: 0;
+  color: #c7c9c0;
+}
+.artifact-source {
+  grid-column: 2;
+  font: 10px/1.8 var(--type-system);
+  overflow-wrap: anywhere;
+}
+/* Research keeps its documentation rhythm; revision state sits in the margin. */
+.section-research.page-section .index-header {
+  max-width: 820px;
+  margin-left: 17%;
+  border-left: 1px solid var(--line);
+  padding-left: 32px;
+}
+.section-research.page-section .index-records {
+  margin-top: 35px;
+}
+.research-record .page-header > h1 {
+  max-width: 920px;
+}
+.revision-marker {
+  margin: 4px 0 50px;
+}
+.revision-marker > span:nth-child(2) {
+  display: block;
+  font: 82px/1.1 var(--type-system);
+  letter-spacing: -.08em;
+  margin: 12px 0;
+}
+.research-pe-address-spaces .article-content pre {
+  background: transparent;
+  color: var(--ink);
+  border-left: 3px solid var(--cobalt);
+  padding: 10px 0 10px 22px;
+  font-size: 16px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+/* Canon is a reference wall. Every placement belongs to a particular reference. */
+.canon-header {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 16px 70px;
+  padding: 65px 0 100px;
+  align-items: end;
+}
+.canon-header > .eyebrow {
+  grid-column: 1 / -1;
+}
+.canon-header h1 {
+  font: clamp(110px, 16vw, 220px)/.8 var(--type-editorial);
+  letter-spacing: -.07em;
+  margin: 22px 0;
+}
+.canon-conviction {
+  font: 30px/1.16 var(--type-editorial);
+  letter-spacing: -.025em;
+  margin: 0 0 20px;
+  max-width: 360px;
+}
+.canon-description {
+  grid-column: 2;
+  font-size: 13px;
+  color: var(--muted);
+  max-width: 300px;
+  margin-bottom: 0;
+}
+.reference-wall {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 80px 28px;
+  padding-bottom: 100px;
+}
+.reference {
+  min-width: 0;
+  scroll-margin-top: 35px;
+}
+.reference-meta {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  color: var(--cobalt-dark);
+  font: 10px/1.6 var(--type-system);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.reference blockquote {
+  margin: 0;
+}
+.reference h2 {
+  font: 40px/1.13 var(--type-editorial);
+  letter-spacing: -.04em;
+  margin: 26px 0;
+}
+.reference h2 a {
+  text-decoration: none;
+}
+.reference h2 a:hover {
+  text-decoration: underline;
+}
+.reference-source {
+  font: 13px/1.6 var(--type-interface);
+  margin: 0;
+}
+.reference-action {
+  display: inline-block;
+  font-size: 12px;
+  margin-top: 25px;
+}
+.reference-REF-A {
+  grid-column: 1 / 10;
+  border-top: 1px solid var(--ink);
+  padding-top: 22px;
+}
+.reference-REF-A h2 {
+  font-size: clamp(42px, 5.3vw, 74px);
+  max-width: 880px;
+  margin: 38px 0 28px;
+}
+.reference-REF-B {
+  grid-column: 8 / 13;
+  grid-row: 2;
+  padding-top: 0;
+}
+.reference-REF-B h2 {
+  font-size: 42px;
+}
+.reference-REF-C {
+  grid-column: 2 / 6;
+  grid-row: 2;
+  margin-top: 155px;
+  padding: 22px 0;
+  border-top: 1px solid var(--ink);
+}
+.reference-REF-C h2 {
+  font-size: 30px;
+  max-width: 240px;
+}
+.reference-REF-C .reference-source {
+  max-width: 210px;
+}
+.reference-REF-D {
+  grid-column: 1 / 8;
+  grid-row: 3;
+  padding: 24px 0 24px 30px;
+  border-left: 5px solid var(--cobalt);
+  margin-top: 40px;
+}
+.reference-REF-D h2 {
+  font-size: clamp(48px, 5.7vw, 80px);
+  line-height: .98;
+  margin: 45px 0 30px;
+}
+.reference-REF-E {
+  grid-column: 9 / 13;
+  grid-row: 3;
+  margin-top: 155px;
+}
+.reference-REF-E h2 {
+  font-size: 33px;
+}
+.reference-REF-F {
+  grid-column: 2 / 10;
+  grid-row: 4;
+  display: grid;
+  grid-template-columns: 26px 1fr;
+  gap: 0 32px;
+  padding: 60px 0 50px;
+  margin-top: 20px;
+}
+.reference-REF-F .reference-meta {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  grid-row: span 3;
+  justify-content: flex-end;
+  border-right: 1px solid var(--line);
+  padding-right: 12px;
+}
+.reference-REF-F h2 {
+  font-size: clamp(55px, 6.5vw, 92px);
+  line-height: 1;
+  max-width: 560px;
+  margin-top: 0;
+}
+.reference-REF-F .reference-action {
+  justify-self: start;
+}
+.reference-REF-G {
+  grid-column: 7 / 13;
+  grid-row: 5;
+  border-top: 1px solid var(--ink);
+  padding-top: 25px;
+}
+.reference-REF-G h2 {
+  font-size: clamp(42px, 4.6vw, 64px);
+}
+/* Machine precision above; human conviction below. The copy is unchanged. */
+.footer-signature {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  align-items: start;
+  gap: 65px;
+  margin: 85px 0 20px;
+}
+.nika {
+  font: 18px/1.5 var(--type-editorial);
+  letter-spacing: .1em;
+  padding-top: 8px;
+}
+.footer-quote {
+  font: 400 clamp(30px, 3.8vw, 53px)/1.07 var(--type-editorial);
+  letter-spacing: -.04em;
+  max-width: 760px;
+  margin: 0;
+  text-wrap: balance;
+}
+/* A dated development note keeps its own quieter, marginal layout. */
+.now-record .record-header {
+  max-width: 900px;
+  margin-left: 12%;
+}
+.now-record .operation-row:nth-child(even) {
+  padding-top: 38px;
+  padding-bottom: 38px;
 }
 @media(min-width:1500px) {
   .studio-hero h1 {
@@ -1264,21 +1686,6 @@ pre,code {
   .lab-transition strong {
     font-size:38px;
   }
-  .reference-grid {
-    display:block;
-  }
-  .reference-body h2,.reference-featured .reference-body h2 {
-    font-size:32px;
-  }
-  .reference-format {
-    margin-top:30px;
-  }
-  .reference-board-note {
-    font-size:21px;
-  }
-  .reference-meta {
-    font-size:10px;
-  }
   .contents {
     border-bottom:1px solid var(--line);
     padding-bottom:20px;
@@ -1422,4 +1829,100 @@ pre,code {
   .contents {
     display:none;
   }
+}
+
+@media (max-width: 1000px) {
+  .canon-header {
+    grid-template-columns: 1.4fr 1fr;
+    column-gap: 30px;
+  }
+  .canon-conviction { font-size: 24px; }
+  .reference-wall { column-gap: 20px; }
+  .reference-REF-B h2 { font-size: 33px; }
+  .reference-REF-C { grid-column: 1 / 6; }
+  .nox-engine-figure { gap: 24px 35px; grid-template-columns: 1fr 1.8fr; }
+  .nox-rule-flow { padding: 24px; }
+  .nox-rule-flow h3 { font-size: 34px; }
+  .nox-rule-flow li { grid-template-columns: 1fr; gap: 10px; }
+  .nox-rule-flow li p { grid-column: 1; }
+  .canon-preview { gap: 40px; }
+  .canon-excerpt blockquote { font-size: 44px; }
+  .project-nox .record-header { column-gap: 35px; }
+}
+@media (max-width: 700px) {
+  .section-control > a { font-size: 11px; }
+  .hero-bottom > p { font-size: 29px; }
+  .featured-copy { padding-bottom: 0; }
+  .featured-project > .loupe-diagram { margin-top: 0; }
+  .research-intro { grid-template-columns: 1fr; gap: 25px; margin-bottom: 40px; }
+  .research-intro > .large-copy { margin: 0; font-size: 37px; }
+  .study-equation { padding: 12px 0 12px 20px; margin-left: 20px; }
+  .study-equation > code { font-size: clamp(22px, 5.9vw, 35px); }
+  .study-equation > p { margin-top: 20px; }
+  .canon-preview { grid-template-columns: 1fr; gap: 36px; }
+  .canon-preview h2 { margin-top: 28px; }
+  .canon-preview-label > p:last-child { margin-top: 20px; }
+  .canon-excerpt { margin: 12px 0 0 25px; border-left: 1px solid var(--line); padding-left: 22px; }
+  .canon-excerpt blockquote { font-size: 39px; margin: 20px 0; }
+  .maintainer { margin-top: 55px; }
+  .section-projects.page-section .index-header { display: block; }
+  .section-projects.page-section .index-header > h1 { font-size: 112px; }
+  .section-projects.page-section .index-records .record-row { grid-template-columns: 1fr auto; padding: 25px 0 38px; }
+  .section-projects.page-section .index-records .record-row + .record-row { margin-left: 22px; }
+  .section-projects.page-section .index-records .record-subject h2 { font-size: 60px; }
+  .project-loupe .record-header h1 { font-size: 110px; }
+  .project-nox .record-header { display: block; }
+  .project-nox .record-header h1 { font-size: 125px; margin: 26px 0; }
+  .project-nox .record-specs { margin-top: 36px; }
+  .loupe-address-figure { grid-template-columns: 1fr; gap: 18px; padding-top: 22px; }
+  .artifact-caption p { margin: 20px 0 0; font-size: 23px; }
+  .address-expression { margin: 5px 0 0 15px; font-size: clamp(22px, 6.1vw, 38px); }
+  .loupe-address-figure pre { grid-column: 1; margin: 5px 0; font-size: 11px; }
+  .loupe-address-figure figcaption { grid-column: 1; }
+  .nox-engine-figure { grid-template-columns: 1fr; gap: 20px; }
+  .nox-engine-figure h2 { font-size: 38px; margin-top: 24px; }
+  .nox-rule-flow { margin-left: 12px; padding: 24px; }
+  .nox-rule-flow li { grid-template-columns: 1fr; }
+  .nox-rule-flow h3 { font-size: 42px; }
+  .artifact-source { grid-column: 1; }
+  .section-research.page-section .index-header { margin-left: 0; padding-left: 20px; }
+  .section-research.page-section .index-header h1 { font-size: 54px; }
+  .revision-marker { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 16px; margin-bottom: 25px; }
+  .revision-marker > span:nth-child(2) { font-size: 44px; margin: 0; }
+  .revision-marker > small { font-size: 9px; }
+  .research-pe-address-spaces .article-content pre { font-size: 13px; padding-left: 15px; }
+  .canon-header { grid-template-columns: 1fr; gap: 24px; padding: 45px 0 65px; }
+  .canon-header h1 { font-size: clamp(96px, 26vw, 150px); margin: 12px 0 22px; }
+  .canon-conviction { font-size: 28px; max-width: 340px; margin: 0; }
+  .canon-description { grid-column: 1; margin-left: 24px; max-width: 240px; font-size: 12px; }
+  .reference-wall { display: block; padding-bottom: 45px; }
+  .reference { margin: 0 0 65px; }
+  .reference-meta { font-size: 9px; }
+  .reference-REF-A h2 { font-size: 43px; line-height: 1.08; margin-top: 28px; }
+  .reference-REF-B { margin-left: 24px; padding-left: 20px; border-left: 1px solid var(--line); }
+  .reference-REF-B h2 { font-size: 31px; }
+  .reference-REF-C { margin-right: 50px; padding-top: 20px; }
+  .reference-REF-C h2 { font-size: 29px; }
+  .reference-REF-D { padding: 16px 0 16px 20px; margin-top: 0; border-left-width: 4px; }
+  .reference-REF-D h2 { font-size: clamp(40px, 11vw, 63px); margin: 26px 0; }
+  .reference-REF-E { margin-left: 35px; }
+  .reference-REF-E h2 { font-size: 30px; }
+  .reference-REF-F { display: grid; grid-template-columns: 1fr; padding: 25px 0; gap: 24px; margin-left: 15px; }
+  .reference-REF-F .reference-meta { writing-mode: horizontal-tb; transform: none; grid-row: auto; border: 0; padding: 0; justify-content: space-between; }
+  .reference-REF-F h2 { font-size: 52px; margin: 0; }
+  .reference-REF-F .reference-action { margin: 0; }
+  .reference-REF-G { margin: 0 0 0 25px; }
+  .reference-REF-G h2 { font-size: 40px; }
+  .footer-signature { display: grid; grid-template-columns: 1fr; gap: 30px; margin: 50px 0 10px; }
+  .nika { font-size: 16px; margin: 0; padding: 0; }
+  .footer-quote { font-size: clamp(29px, 7.8vw, 42px); max-width: 490px; margin-left: 22px; }
+  .now-record .record-header { margin-left: 0; }
+}
+@media print {
+  .reference-wall { display: block; }
+  .reference { margin: 30px 0; break-inside: avoid; }
+  .reference-REF-F .reference-meta { writing-mode: horizontal-tb; transform: none; }
+  .reference-REF-F { display: block; }
+  .footer-signature { margin-top: 35px; }
+  .footer-quote { font-size: 30px; }
 }
