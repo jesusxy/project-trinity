@@ -1,0 +1,170 @@
+{
+  "source": {
+    "repository": "https://github.com/jesusxy/loupe",
+    "commit": "2441f9da0701408237e1b6cf8c94d62c36562147",
+    "path": "testdata/test.exe",
+    "url": "https://github.com/jesusxy/loupe/blob/2441f9da0701408237e1b6cf8c94d62c36562147/testdata/test.exe",
+    "parser": "loupe/inspect.Parse",
+    "parser_commit": "e129f1551b1e54178957d027b08d892bcd2da2ad",
+    "parser_sha256": "1f5ac640d8d29bebd73b021ec191329d50835397567904ccf9611b5d242e45f7",
+    "method": "Static inspection of the existing repository test fixture; no execution."
+  },
+  "image": {
+    "entry_rva": 5120,
+    "entry_va": 5368714240,
+    "header_size": 1536,
+    "image_base": 5368709120,
+    "image_size": 151552,
+    "machine": 34404,
+    "magic": 523,
+    "section_alignment": 4096,
+    "sections": [
+      {
+        "characteristics": 1610612768,
+        "name": ".text",
+        "raw_offset": 1536,
+        "raw_size": 6656,
+        "rva": 4096,
+        "virtual_size": 6224
+      },
+      {
+        "characteristics": 3221225536,
+        "name": ".data",
+        "raw_offset": 8192,
+        "raw_size": 512,
+        "rva": 12288,
+        "virtual_size": 160
+      },
+      {
+        "characteristics": 1073741888,
+        "name": ".rdata",
+        "raw_offset": 8704,
+        "raw_size": 2560,
+        "rva": 16384,
+        "virtual_size": 2440
+      },
+      {
+        "characteristics": 1073741888,
+        "name": ".pdata",
+        "raw_offset": 11264,
+        "raw_size": 1024,
+        "rva": 20480,
+        "virtual_size": 516
+      },
+      {
+        "characteristics": 1073741888,
+        "name": ".xdata",
+        "raw_offset": 12288,
+        "raw_size": 512,
+        "rva": 24576,
+        "virtual_size": 408
+      },
+      {
+        "characteristics": 3221225600,
+        "name": ".bss",
+        "raw_offset": 0,
+        "raw_size": 0,
+        "rva": 28672,
+        "virtual_size": 384
+      },
+      {
+        "characteristics": 1073741888,
+        "name": ".idata",
+        "raw_offset": 12800,
+        "raw_size": 2560,
+        "rva": 32768,
+        "virtual_size": 2112
+      },
+      {
+        "characteristics": 3221225536,
+        "name": ".tls",
+        "raw_offset": 15360,
+        "raw_size": 512,
+        "rva": 36864,
+        "virtual_size": 16
+      },
+      {
+        "characteristics": 1107296320,
+        "name": ".reloc",
+        "raw_offset": 15872,
+        "raw_size": 512,
+        "rva": 40960,
+        "virtual_size": 96
+      },
+      {
+        "characteristics": 1107296320,
+        "name": ".debug_aranges",
+        "raw_offset": 16384,
+        "raw_size": 1536,
+        "rva": 45056,
+        "virtual_size": 1280
+      },
+      {
+        "characteristics": 1107296320,
+        "name": ".debug_info",
+        "raw_offset": 17920,
+        "raw_size": 48640,
+        "rva": 49152,
+        "virtual_size": 48257
+      },
+      {
+        "characteristics": 1107296320,
+        "name": ".debug_abbrev",
+        "raw_offset": 66560,
+        "raw_size": 8704,
+        "rva": 98304,
+        "virtual_size": 8284
+      },
+      {
+        "characteristics": 1107296320,
+        "name": ".debug_line",
+        "raw_offset": 75264,
+        "raw_size": 8192,
+        "rva": 110592,
+        "virtual_size": 7732
+      },
+      {
+        "characteristics": 1107296320,
+        "name": ".debug_frame",
+        "raw_offset": 83456,
+        "raw_size": 2560,
+        "rva": 118784,
+        "virtual_size": 2112
+      },
+      {
+        "characteristics": 1107296320,
+        "name": ".debug_str",
+        "raw_offset": 86016,
+        "raw_size": 1024,
+        "rva": 122880,
+        "virtual_size": 877
+      },
+      {
+        "characteristics": 1107296320,
+        "name": ".debug_line_str",
+        "raw_offset": 87040,
+        "raw_size": 10240,
+        "rva": 126976,
+        "virtual_size": 9759
+      },
+      {
+        "characteristics": 1107296320,
+        "name": ".debug_loclists",
+        "raw_offset": 97280,
+        "raw_size": 5120,
+        "rva": 139264,
+        "virtual_size": 4684
+      },
+      {
+        "characteristics": 1107296320,
+        "name": ".debug_rnglists",
+        "raw_offset": 102400,
+        "raw_size": 512,
+        "rva": 147456,
+        "virtual_size": 396
+      }
+    ],
+    "sha256": "26f7544a0ff3ea1aabf9896e0483f56658b544b77c13e121c4a6a6e42926e8a5",
+    "size": 140714
+  }
+}

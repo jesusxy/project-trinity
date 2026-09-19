@@ -1,0 +1,25 @@
+{{ $specimen := hugo.Data.work.nox }}
+{{ $rule := index $specimen.rules 0 }}
+{{ $condition := index $rule.conditions 0 }}
+<figure class="work-specimen specimen-rule">
+  <div class="specimen-sheet">
+    <div class="specimen-label"><span>RULE DEFINITION</span><span>YAML</span></div>
+    <h3>{{ $rule.name }}</h3>
+    <div class="rule-input"><span>Event type</span><code>{{ $rule.event_type }}</code></div>
+    <div class="rule-predicate">
+      <code>{{ $condition.field }}</code>
+      <div><span>{{ $condition.operator }}</span><strong>{{ $condition.value }}</strong></div>
+    </div>
+    <div class="rule-output">
+      <p>ON MATCH <span aria-hidden="true">↓</span> ALERT METADATA</p>
+      <dl>
+        <div><dt>ATT&CK</dt><dd>{{ $rule.technique_id }}</dd></div>
+        <div><dt>Severity</dt><dd>{{ $rule.severity }}</dd></div>
+      </dl>
+    </div>
+  </div>
+  <figcaption>
+    <p>Predicate and alert fields from Nox’s checked-in rule definition.</p>
+    <a class="artifact-source" href="{{ $specimen.source.url }}">detections/rules.yaml · {{ substr $specimen.source.commit 0 8 }} ↗</a>
+  </figcaption>
+</figure>

@@ -1,0 +1,56 @@
+{{ define "head" }}
+  {{ $style := resources.Get "css/work.css" | minify | fingerprint }}
+  <link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">
+  {{ $preview := resources.Get "js/work.js" | minify | fingerprint }}
+  <script src="{{ $preview.RelPermalink }}" integrity="{{ $preview.Data.Integrity }}" defer></script>
+{{ end }}
+
+{{ define "main" }}
+<div class="work-index">
+  <header class="work-heading">
+    <div>
+      <p class="eyebrow">PROJECT TRINITY / WORK INDEX</p>
+      <div class="work-heading-title">
+        <h1>{{ .Title }}</h1>
+        <p class="work-count"><span>{{ printf "%02d" (len .Pages) }}</span> projects</p>
+      </div>
+    </div>
+    <div class="work-introduction">{{ .Content }}</div>
+  </header>
+
+  <div class="work-catalog">
+    <div class="work-list">
+      <div class="work-columns" aria-hidden="true"><span>Record</span><span>Project</span><span>Status</span></div>
+      {{ range .Pages.ByWeight }}
+      {{ $hasPreview := in (slice "PRJ-001" "PRJ-002") .Params.record_id }}
+      <article class="work-entry" aria-labelledby="work-{{ .Params.record_id }}"{{ if $hasPreview }} data-preview="preview-{{ .Params.record_id }}"{{ end }}>
+        <span class="work-id">{{ .Params.record_id }}</span>
+        <h2 id="work-{{ .Params.record_id }}"><a href="{{ .RelPermalink }}">{{ .Title }} <span aria-hidden="true">↗</span></a></h2>
+        <span class="work-status">{{ .Params.status }}</span>
+        <p>{{ .Description }}</p>
+        {{ if $hasPreview }}<button class="work-preview-button" type="button" aria-label="Preview {{ .Title }}" aria-controls="preview-{{ .Params.record_id }}" aria-expanded="false" hidden>Preview <span aria-hidden="true">+</span></button>{{ end }}
+      </article>
+      {{ end }}
+    </div>
+
+    <aside class="work-preview" aria-label="Project specimen preview" hidden>
+      <div class="work-preview-heading">
+        <h2>Specimen <span data-preview-label></span></h2>
+        <button class="work-preview-close" type="button" aria-label="Close preview" hidden>Close <span aria-hidden="true">×</span></button>
+      </div>
+      <div class="work-preview-rest"><p>Examine a project specimen.</p><span>Hover, focus, or choose Preview.</span></div>
+      {{ range .Pages.ByWeight }}
+      {{ if in (slice "PRJ-001" "PRJ-002") .Params.record_id }}
+      <div class="work-preview-panel" id="preview-{{ .Params.record_id }}" data-label="{{ .Params.record_id }} / {{ .Title }}" role="region" aria-label="{{ .Title }} specimen" hidden>
+        {{ if eq .Params.record_id "PRJ-001" }}
+          {{ partial "work/loupe-specimen.html" . }}
+        {{ else if eq .Params.record_id "PRJ-002" }}
+          {{ partial "work/nox-specimen.html" . }}
+        {{ end }}
+      </div>
+      {{ end }}
+      {{ end }}
+    </aside>
+  </div>
+</div>
+{{ end }}

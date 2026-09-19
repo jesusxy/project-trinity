@@ -1,0 +1,19 @@
+# Exact first rule from Nox; condition and output labels retain its configured values.
+source:
+  repository: https://github.com/jesusxy/bit-by-bit
+  commit: 21253c44f7f000078517def21c42bf123fd250f4
+  path: nox/detections/rules.yaml
+  url: https://github.com/jesusxy/bit-by-bit/blob/21253c44f7f000078517def21c42bf123fd250f4/nox/detections/rules.yaml#L1-L11
+  evaluation: nox/internal/rules/definition.go:EvaluateYAMLRule
+  alert_mapping: nox/internal/rules/engine.go:Engine.EvaluateEvent
+rules:
+  - name: Suspicious Nmap Scan
+    description: "Detects the use of nmap a common network scanning tool."
+    technique_id: T1046
+    severity: MEDIUM
+    event_type: Process_Executed
+    conditions:
+      # trigger if the process_name is nmap
+      - field: metadata.process_name
+        operator: equals
+        value: "nmap"

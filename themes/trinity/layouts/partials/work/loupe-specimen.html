@@ -1,0 +1,29 @@
+{{ $specimen := hugo.Data.work.loupe }}
+{{ $image := $specimen.image }}
+{{ $text := index (where $image.sections "name" ".text") 0 }}
+{{ $largest := math.Max $text.raw_size $text.virtual_size }}
+<figure class="work-specimen specimen-pe">
+  <div class="specimen-sheet">
+    <div class="specimen-label"><span>TEST FIXTURE</span><span>PE32+ / AMD64</span></div>
+    <h3 class="specimen-filename">test.exe</h3>
+    <div class="pe-section-heading"><strong>{{ $text.name }}</strong><span>SECTION 01 / {{ printf "%02d" (len $image.sections) }}</span></div>
+    <dl class="pe-addresses">
+      <div><dt>File offset</dt><dd>{{ printf "0x%04X" (int $text.raw_offset) }}</dd></div>
+      <div><dt>Image RVA</dt><dd>{{ printf "0x%04X" (int $text.rva) }}</dd></div>
+    </dl>
+    <div class="pe-sizes" aria-label="Section sizes in bytes, on a shared scale">
+      {{ range slice (dict "label" "Raw" "value" $text.raw_size) (dict "label" "Virtual" "value" $text.virtual_size) }}
+      <div class="pe-size">
+        <span>{{ .label }}</span>
+        <span class="pe-size-track" aria-hidden="true"><span style="{{ printf "width: %.4f%%" (mul (div (float .value) $largest) 100) | safeCSS }}"></span></span>
+        <span>{{ lang.FormatNumber 0 .value }} B</span>
+      </div>
+      {{ end }}
+    </div>
+    <div class="pe-image-base"><span>Preferred image base</span><code>{{ printf "0x%X" (int $image.image_base) }}</code></div>
+  </div>
+  <figcaption>
+    <p>One section from Loupe’s test fixture, read by <code>inspect.Parse</code>.</p>
+    <a class="artifact-source" href="{{ $specimen.source.url }}" title="Fixture SHA-256: {{ $image.sha256 }}">{{ $specimen.source.path }} · SHA-256 {{ substr $image.sha256 0 8 }} ↗</a>
+  </figcaption>
+</figure>

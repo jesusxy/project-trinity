@@ -21,7 +21,9 @@ for path,page in pages.items():
     assert page.h1==1,(path,'expected one h1',page.h1)
     assert len(page.ids)==len(set(page.ids)),(path,'duplicate IDs')
     assert 'IC XC NIKA' in text and 'The world will see the great result from my hands' in text,(path,'footer changed')
-    if path != root/'labs/index.html':assert not page.scripts,(path,'unexpected JavaScript')
+    if path == root/'projects/index.html':
+        assert len(page.scripts)==1 and page.scripts[0].startswith('/js/work.') and page.scripts[0].endswith('.js'),(path,'unexpected Work script')
+    elif path != root/'labs/index.html':assert not page.scripts,(path,'unexpected JavaScript')
     for href in page.links:
         url=urlsplit(href)
         if url.netloc or url.scheme:continue
