@@ -9,10 +9,13 @@ import (
 	"syscall/js"
 )
 
+// Browser memory budget; the native CLI controls its own input limit.
+const maxFileSize = 16 << 20
+
 func hex(n uint64) string { return fmt.Sprintf("0x%X", n) }
 func main() {
 	handler := js.FuncOf(func(this js.Value, args []js.Value) any {
-		if len(args) != 1 || args[0].Get("byteLength").Int() > inspect.MaxFileSize {
+		if len(args) != 1 || args[0].Get("byteLength").Int() > maxFileSize {
 			return `{"error":"file exceeds 16 MiB limit"}`
 		}
 		raw := make([]byte, args[0].Get("byteLength").Int())

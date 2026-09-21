@@ -25,14 +25,16 @@ Work → Research → Lab → Canon forms a small navigable system. Research rec
 
 `ImageInfo` and the PE field extraction/architecture checks were extracted from the real adjacent Loupe checkout (`9439f51f`) into `loupe/inspect`. The native CLI now opens a bounded reader and calls `inspect.Parse`. A thin Go adapter compiles that same package for `GOOS=js GOARCH=wasm`; it only serializes the resulting image model and bounded byte previews. It has no Unicorn dependency.
 
-Trinity vendors an identical source snapshot with a verified core hash and companion patch because the extraction is not yet an upstream release. The shared package and native CLI refactor are committed locally in Loupe as `e129f1551b1e54178957d027b08d892bcd2da2ad`. There is no separate JavaScript PE parser. Browser-specific code handles files, worker lifecycle, and rendering. Native package tests and compilation passed locally with the installed Unicorn library; native emulation was not executed.
+Trinity vendors an identical source snapshot with a verified core hash and companion patch because the extraction is not yet an upstream release. The initial shared package and native CLI refactor were committed in Loupe as `e129f1551b1e54178957d027b08d892bcd2da2ad`; provenance records the current source checkout and any local changes. There is no separate JavaScript PE parser. Browser-specific code handles files, worker lifecycle, and rendering. Native package tests and compilation passed locally with the installed Unicorn library; native emulation was not executed.
+
+PE diagnostics remain in the native CLI. File-size budgets are interface policy: 256 MiB by default for the CLI, configurable with `-max-file-size-mib`, and 16 MiB for the browser. The CLI checks file size before reading and enforces the budget during reading. The core accepts already allocated bytes and keeps its structural checks. This does not change the native emulator's memory requirements or guarantee that it can emulate every larger file.
 
 Supported: x86 PE32 and AMD64 PE32+, preferred base/entry addresses, image/header sizes, section alignment, section descriptors, declared permissions, and up to 128 preview bytes per section. Hexadecimal strings preserve 64-bit addresses across the Go/JavaScript boundary. Bars describe relative raw section sizes, not memory activity. Imports remain omitted because Loupe currently walks them through emulated memory.
 
 ### Hostile input boundary
 
 - No execution, native loading, script evaluation, or user-supplied WebAssembly instantiation.
-- 16 MiB file limit checked before browser reading and again in Go.
+- 16 MiB file limit checked before browser reading and again in the Go/WASM adapter.
 - Bounds checks for PE header, optional header, section table, raw extents, symbols, strings, and relocation ranges before `debug/pe` sees the bytes.
 - 96 sections; 65,536 COFF symbols; 1 MiB string table; 4,096 relocation records per section; 256-byte section names. Checked address arithmetic and a parser panic boundary.
 - A disposable worker per request with a 15-second deadline including startup, explicit cancel, and termination after success/error. Bytes are transferred to the worker; the retained result contains metadata and bounded previews.

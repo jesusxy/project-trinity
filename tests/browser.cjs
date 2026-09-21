@@ -142,6 +142,16 @@ async function assertHexBytes(preview, bytes, offset) {
  assert.equal(await page.getByRole('button',{name:'Clear / cancel',exact:true}).isVisible(),true);
  await input.setInputFiles({name:'large.exe',mimeType:'application/octet-stream',buffer:Buffer.alloc(16*1024*1024+1)});
  await page.getByRole('status').filter({hasText:'16 MiB limit'}).waitFor();
+ // Bypass the UI guard: the Go browser adapter must enforce its own budget.
+ const oversizedResult=await page.evaluate(()=>new Promise((resolve,reject)=>{
+  const root=document.querySelector('[data-loupe]');const worker=new Worker(root.dataset.worker);
+  const timer=setTimeout(()=>{worker.terminate();reject(new Error('adapter budget check timed out'));},15000);
+  worker.onmessage=({data})=>{clearTimeout(timer);worker.terminate();resolve(data);};
+  worker.onerror=()=>{clearTimeout(timer);worker.terminate();reject(new Error('adapter worker failed'));};
+  const bytes=new ArrayBuffer(16*1024*1024+1);
+  worker.postMessage({bytes,runtime:root.dataset.runtime,wasm:root.dataset.wasm},[bytes]);
+ }));
+ assert.match(oversizedResult.error,/16 MiB limit/);
  await input.setInputFiles({name:'empty.exe',mimeType:'application/octet-stream',buffer:Buffer.alloc(0)});
  await page.getByRole('status').filter({hasText:'This file is empty'}).waitFor();
  // Worker asset failure, cancellation, then recovery.

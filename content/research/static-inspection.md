@@ -1,14 +1,17 @@
 ---
 title: "The static inspection boundary"
 date: 2026-09-17
-lastmod: 2026-09-17
+lastmod: 2026-09-21
 record_id: "REC-002"
 record_class: "research"
 status: "active notes"
-revision: 1
+revision: 2
 description: "Separating a PE image model from the machinery that executes it."
 related: ["/projects/loupe", "/research/pe-address-spaces", "/canon"]
 revisions:
+  - revision: 2
+    date: "2026-09-21"
+    note: "Separated browser and native file-size budgets; preserved CLI inspection diagnostics."
   - revision: 1
     date: "2026-09-17"
     note: "Recorded the shared-core extraction and browser resource limits."
@@ -32,7 +35,9 @@ The interface reports structure, not a safety verdict. A successfully parsed exe
 
 Go explicitly documents that `debug/pe` is not hardened for adversarial input. Loupe therefore validates ranges and allocation-driving counts before calling it, catches parser panics, and runs the browser operation inside a worker that can be terminated.
 
-The current boundary limits files to **16 MiB**, sections to **96**, COFF symbols to **65,536**, string tables to **1 MiB**, relocation records to **4,096 per section**, and section names to **256 bytes**. The browser stops an inspection after **15 seconds**, including engine loading. These are defensive product limits, not claims about what every valid PE file must contain.
+File-size budgets belong to the caller. Trinity's browser interface and Go/WASM adapter enforce **16 MiB**. The native CLI defaults to **256 MiB**, adjustable with `-max-file-size-mib`; it checks the file size before reading and caps the read as well. The shared parser does not impose the browser's file-size limit, and CLI diagnostics remain in the native interface.
+
+The shared structural limits remain **96** sections, **65,536** COFF symbols, a **1 MiB** string table, **4,096 relocation records per section**, and **256 bytes per section name**. The browser stops an inspection after **15 seconds**, including engine loading. These are defensive product limits, not claims about what every valid PE file must contain. The native input limit does not bound the emulator's memory use.
 
 The UI previews at most 128 file bytes per section. After a result or error, it terminates the worker. Clearing the result removes the displayed metadata and previews. No binary is written to persistent browser storage or included in a network request. Engine assets are downloaded when a file is selected.
 

@@ -1,10 +1,10 @@
-diff --git a/cmd/main.go b/cmd/main.go
-index d06612a..a761855 100644
 --- a/cmd/main.go
 +++ b/cmd/main.go
-@@ -5,17 +5,14 @@ import (
+@@ -4,16 +4,14 @@
+ 	"bytes"
  	"debug/pe"
  	"encoding/binary"
++	"flag"
  	"fmt"
 +	"io"
  	"log"
@@ -12,17 +12,15 @@ index d06612a..a761855 100644
  	"os"
  
  	"github.com/unicorn-engine/unicorn/bindings/go/unicorn"
- )
- 
+-)
+-
 -const (
 -	optionalHeaderMagicPE32     uint16 = 0x10b
 -	optionalHeaderMagicPE32Plus uint16 = 0x20b
--)
--
+ )
+ 
  type MemRegion struct {
- 	Base  uint64
- 	Size  uint64
-@@ -33,18 +30,7 @@ type ImportTable struct {
+@@ -33,27 +31,59 @@
  	ByName    map[string]uint64
  }
  
@@ -37,27 +35,96 @@ index d06612a..a761855 100644
 -	SizeOfHeaders       uint32
 -	SectionAlignment    uint32
 -	Sections            []*pe.Section
--}
 +type ImageInfo = inspect.ImageInfo
++
++const defaultMaxFileSizeMiB = 256
++
++type cliOptions struct {
++	path        string
++	maxFileSize int64
++}
++
++func parseOptions(args []string, output io.Writer) (cliOptions, error) {
++	options := cliOptions{path: "testdata/test.exe"}
++	flags := flag.NewFlagSet("loupe", flag.ContinueOnError)
++	flags.SetOutput(output)
++	maxMiB := flags.Int64("max-file-size-mib", defaultMaxFileSizeMiB, "maximum input size in MiB (does not bound emulated memory)")
++	flags.Usage = func() {
++		fmt.Fprintln(output, "Usage: loupe [-max-file-size-mib N] [PE file]")
++		flags.PrintDefaults()
++	}
++	if err := flags.Parse(args); err != nil {
++		return options, err
++	}
++	if flags.NArg() > 1 {
++		return options, fmt.Errorf("expected at most one PE file path")
++	}
++	// Leave room for the extra byte used to detect a growing or oversized input.
++	maxInt := int64(^uint(0) >> 1)
++	if *maxMiB <= 0 || *maxMiB > (maxInt-1)/(1<<20) {
++		return options, fmt.Errorf("max-file-size-mib must be a positive value that fits this platform")
++	}
++	options.maxFileSize = *maxMiB << 20
++	if flags.NArg() == 1 {
++		options.path = flags.Arg(0)
++	}
++	return options, nil
+ }
  
  func main() {
++	options, err := parseOptions(os.Args[1:], os.Stderr)
++	if err == flag.ErrHelp {
++		return
++	}
++	if err != nil {
++		log.Fatal(err)
++	}
  	fmt.Println("Initializing the emulator...")
-@@ -356,69 +342,20 @@ func addAPIHook(uc unicorn.Unicorn, importTable ImportTable, importRegion MemReg
+ 
+ 	// parse PE BEFORE creating unicorn
+-	imageInfo, raw, err := parsePE("testdata/test.exe")
++	fmt.Printf("[pe] Reading %s (limit %d MiB)\n", options.path, options.maxFileSize>>20)
++	imageInfo, raw, err := parsePE(options.path, options.maxFileSize)
+ 	if err != nil {
+ 		log.Fatalf("Failed to parse PE file: %v", err)
+ 	}
++	printPEInfo(os.Stdout, imageInfo)
+ 
+ 	var mode int
+ 
+@@ -355,70 +385,46 @@
+ }
  
  // ------------- PE File ---------------- //
- func parsePE(path string) (*ImageInfo, []byte, error) {
+-func parsePE(path string) (*ImageInfo, []byte, error) {
 -	raw, err := os.ReadFile(path)
++func parsePE(path string, maxFileSize int64) (*ImageInfo, []byte, error) {
++	if maxFileSize <= 0 || maxFileSize >= int64(^uint(0)>>1) {
++		return nil, nil, fmt.Errorf("invalid input size limit")
++	}
 +	f, err := os.Open(path)
++	if err != nil {
++		return nil, nil, fmt.Errorf("failed to open PE file: %w", err)
++	}
++	defer f.Close()
++	stat, err := f.Stat()
++	if err != nil {
++		return nil, nil, fmt.Errorf("failed to stat PE file: %w", err)
++	}
++	if !stat.Mode().IsRegular() {
++		return nil, nil, fmt.Errorf("expected a regular PE file")
++	}
++	if stat.Size() > maxFileSize {
++		return nil, nil, fmt.Errorf("file exceeds %d MiB CLI limit; adjust -max-file-size-mib if needed", maxFileSize>>20)
++	}
++	raw, err := io.ReadAll(io.LimitReader(f, maxFileSize+1))
  	if err != nil {
--		return nil, nil, fmt.Errorf("failed to read PE file: %w", err)
-+		return nil, nil, err
+ 		return nil, nil, fmt.Errorf("failed to read PE file: %w", err)
  	}
 -
 -	f, err := pe.NewFile(bytes.NewReader(raw))
 -
-+	defer f.Close()
-+	raw, err := io.ReadAll(io.LimitReader(f, inspect.MaxFileSize+1))
- 	if err != nil {
+-	if err != nil {
 -		return nil, nil, fmt.Errorf("failed to parse PE file: %w\n", err)
 -	}
 -
@@ -91,8 +158,7 @@ index d06612a..a761855 100644
 -		fmt.Printf("[pe] Entry point of PE: 0x%x\n", imageInfo.EntryPointRVA)
 -	default:
 -		return nil, nil, fmt.Errorf("unsupported optional header type %T", f.OptionalHeader)
-+		return nil, nil, err
- 	}
+-	}
 -
 -	valid32 := imageInfo.Arch == pe.IMAGE_FILE_MACHINE_I386 &&
 -		imageInfo.Magic == optionalHeaderMagicPE32
@@ -111,21 +177,120 @@ index d06612a..a761855 100644
 -
 -	for _, section := range imageInfo.Sections {
 -		fmt.Printf("[pe] Section name:%-8s - va:0x%x\n", section.Name, section.VirtualAddress)
+-	}
+-
+-	return &imageInfo, raw, nil
++	if int64(len(raw)) > maxFileSize {
++		return nil, nil, fmt.Errorf("file exceeds %d MiB CLI limit; adjust -max-file-size-mib if needed", maxFileSize>>20)
++	}
 +	image, err := inspect.Parse(raw)
 +	if err != nil {
 +		return nil, nil, err
- 	}
--
--	return &imageInfo, raw, nil
++	}
 +	return image, raw, nil
++}
++
++func printPEInfo(w io.Writer, image *ImageInfo) {
++	fmt.Fprintf(w, "[pe] Number of Sections in file %d\n", len(image.Sections))
++	fmt.Fprintf(w, "[pe] Image Base: 0x%x\n", image.ImageBase)
++	fmt.Fprintf(w, "[pe] Entry point of PE: 0x%x\n", image.EntryPointRVA)
++	for _, section := range image.Sections {
++		fmt.Fprintf(w, "[pe] Section name:%-8s - va:0x%x\n", section.Name, section.VirtualAddress)
++	}
  }
  
  func loadPESections(uc unicorn.Unicorn, raw []byte, imageInfo *ImageInfo) error {
-diff --git a/inspect/inspect.go b/inspect/inspect.go
-new file mode 100644
+--- /dev/null
++++ b/cmd/main_test.go
+@@ -0,0 +1,85 @@
++package main
++
++import (
++	"bytes"
++	"debug/pe"
++	"flag"
++	"io"
++	"os"
++	"path/filepath"
++	"strings"
++	"testing"
++)
++
++func TestOptions(t *testing.T) {
++	defaults, err := parseOptions(nil, io.Discard)
++	if err != nil || defaults.path != "testdata/test.exe" || defaults.maxFileSize != 256<<20 {
++		t.Fatalf("defaults: %+v, %v", defaults, err)
++	}
++	custom, err := parseOptions([]string{"-max-file-size-mib", "512", "sample.exe"}, io.Discard)
++	if err != nil || custom.path != "sample.exe" || custom.maxFileSize != 512<<20 {
++		t.Fatalf("custom options: %+v, %v", custom, err)
++	}
++	for _, args := range [][]string{
++		{"-max-file-size-mib", "0"},
++		{"-max-file-size-mib", "-1"},
++		{"-max-file-size-mib", "9223372036854775807"},
++		{"-max-file-size-mib", "invalid"},
++		{"one.exe", "two.exe"},
++	} {
++		if _, err := parseOptions(args, io.Discard); err == nil {
++			t.Fatalf("accepted invalid options %q", args)
++		}
++	}
++	if _, err := parseOptions([]string{"-h"}, io.Discard); err != flag.ErrHelp {
++		t.Fatalf("help: %v", err)
++	}
++}
++
++func TestLargerFileAndCLIBudget(t *testing.T) {
++	// Statically parse the existing fixture with a padded overlay. Never emulate it.
++	fixture, err := os.ReadFile("../testdata/test.exe")
++	if err != nil {
++		t.Fatal(err)
++	}
++	path := filepath.Join(t.TempDir(), "padded.exe")
++	if err := os.WriteFile(path, fixture, 0600); err != nil {
++		t.Fatal(err)
++	}
++	const size = 17 << 20
++	if err := os.Truncate(path, size); err != nil {
++		t.Fatal(err)
++	}
++	image, raw, err := parsePE(path, size)
++	if err != nil || image == nil || len(raw) != size {
++		t.Fatalf("file at configured limit: image=%v, bytes=%d, err=%v", image != nil, len(raw), err)
++	}
++	if _, _, err := parsePE(path, size-1); err == nil || !strings.Contains(err.Error(), "-max-file-size-mib") {
++		t.Fatalf("file above limit should explain the override: %v", err)
++	}
++	if _, _, err := parsePE(path, 0); err == nil {
++		t.Fatal("accepted an invalid size limit")
++	}
++	if _, _, err := parsePE(t.TempDir(), size); err == nil {
++		t.Fatal("accepted a directory")
++	}
++}
++
++func TestPEProgressOutput(t *testing.T) {
++	image := &ImageInfo{
++		ImageBase: 0x140000000, EntryPointRVA: 0x1000,
++		Sections: []*pe.Section{{SectionHeader: pe.SectionHeader{Name: ".text", VirtualAddress: 0x1000}}},
++	}
++	var output bytes.Buffer
++	printPEInfo(&output, image)
++	for _, expected := range []string{
++		"[pe] Number of Sections in file 1\n",
++		"[pe] Image Base: 0x140000000\n",
++		"[pe] Entry point of PE: 0x1000\n",
++		"[pe] Section name:.text    - va:0x1000\n",
++	} {
++		if !strings.Contains(output.String(), expected) {
++			t.Fatalf("missing diagnostic %q in %q", expected, output.String())
++		}
++	}
++}
 --- /dev/null
 +++ b/inspect/inspect.go
-@@ -0,0 +1,181 @@
+@@ -0,0 +1,178 @@
 +// Package inspect is Loupe's static PE inspection boundary. It never executes input.
 +package inspect
 +
@@ -139,7 +304,6 @@ new file mode 100644
 +const (
 +	optionalHeaderMagicPE32     uint16 = 0x10b
 +	optionalHeaderMagicPE32Plus uint16 = 0x20b
-+	MaxFileSize                        = 16 << 20
 +	MaxSections                        = 96
 +)
 +
@@ -157,7 +321,8 @@ new file mode 100644
 +}
 +
 +// Parse extracts the same image model used by Loupe's native loader.
-+// Preflight bounds every debug/pe allocation path before calling that package.
++// Callers must enforce their file-size budget before reading input into memory.
++// Preflight checks structural ranges and caps eagerly read metadata.
 +func Parse(raw []byte) (info *ImageInfo, err error) {
 +	defer func() {
 +		if recover() != nil {
@@ -229,9 +394,6 @@ new file mode 100644
 +}
 +
 +func validate(b []byte) error {
-+	if len(b) > MaxFileSize {
-+		return fmt.Errorf("file exceeds 16 MiB limit")
-+	}
 +	if len(b) < 96 || string(b[:2]) != "MZ" {
 +		return fmt.Errorf("expected a Windows PE file with an MZ header")
 +	}
@@ -307,11 +469,9 @@ new file mode 100644
 +	}
 +	return nil
 +}
-diff --git a/inspect/inspect_test.go b/inspect/inspect_test.go
-new file mode 100644
 --- /dev/null
 +++ b/inspect/inspect_test.go
-@@ -0,0 +1,109 @@
+@@ -0,0 +1,120 @@
 +package inspect
 +
 +import (
@@ -405,8 +565,19 @@ new file mode 100644
 +			t.Fatalf("accepted truncation at %d", n)
 +		}
 +	}
-+	if _, err := Parse(make([]byte, MaxFileSize+1)); err == nil {
-+		t.Fatal("accepted oversized file")
++}
++func TestFileSizeIsCallerPolicy(t *testing.T) {
++	// A trailing overlay must not make the core apply the browser's 16 MiB budget.
++	b := make([]byte, (17<<20)+1)
++	copy(b, fixture(true))
++	info, err := Parse(b)
++	if err != nil || info == nil || info.EntryPointVA != 0x140001000 {
++		t.Fatalf("larger image: info=%+v, err=%v", info, err)
++	}
++	// Larger inputs still go through structural validation.
++	b[0] = 0
++	if _, err := Parse(b); err == nil {
++		t.Fatal("accepted malformed larger image")
 +	}
 +}
 +func FuzzParse(f *testing.F) {

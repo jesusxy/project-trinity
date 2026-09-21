@@ -757,6 +757,7 @@ pre,code {
   color:var(--muted);
   max-width:370px;
   margin-bottom:0;
+  margin-top:7px;
 }
 .file-select {
   border-top:4px solid var(--cobalt);
@@ -918,8 +919,6 @@ pre,code {
   background:var(--cobalt);
 }
 .section-detail>.inspection-meta {
-  max-width:640px;
-  grid-template-columns:repeat(3,minmax(0,1fr));
   gap:18px 24px;
   padding:0;
   margin:24px 0;

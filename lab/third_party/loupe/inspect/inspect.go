@@ -11,7 +11,6 @@ import (
 const (
 	optionalHeaderMagicPE32     uint16 = 0x10b
 	optionalHeaderMagicPE32Plus uint16 = 0x20b
-	MaxFileSize                        = 16 << 20
 	MaxSections                        = 96
 )
 
@@ -29,7 +28,8 @@ type ImageInfo struct {
 }
 
 // Parse extracts the same image model used by Loupe's native loader.
-// Preflight bounds every debug/pe allocation path before calling that package.
+// Callers must enforce their file-size budget before reading input into memory.
+// Preflight checks structural ranges and caps eagerly read metadata.
 func Parse(raw []byte) (info *ImageInfo, err error) {
 	defer func() {
 		if recover() != nil {
@@ -101,9 +101,6 @@ func span(raw []byte, offset, size uint64) bool {
 }
 
 func validate(b []byte) error {
-	if len(b) > MaxFileSize {
-		return fmt.Errorf("file exceeds 16 MiB limit")
-	}
 	if len(b) < 96 || string(b[:2]) != "MZ" {
 		return fmt.Errorf("expected a Windows PE file with an MZ header")
 	}

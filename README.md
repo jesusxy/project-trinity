@@ -37,7 +37,9 @@ The archetype starts as a draft. Assign a unique `REC-` identifier, a substantiv
 
 Loupe owns `inspect/inspect.go`. It was extracted from Loupe's `cmd/main.go` at `9439f51fc84946046d6755c76cddeed58ba401e8`; the adjacent local Loupe CLI consumes it in local commit `e129f1551b1e54178957d027b08d892bcd2da2ad`. The package has **not** been published as an upstream release.
 
-Trinity checks in an identical source snapshot under `lab/third_party/loupe` so its deployment does not depend on an unpublished module or a sibling checkout. `PROVENANCE.json` records the extraction baseline, local source commit, and exact core SHA-256; `scripts/build.py` rejects drift. `lab/loupe-core.patch` contains the companion Loupe change for review or application to the baseline checkout. Do not apply it to the already updated local checkout.
+Trinity checks in an identical source snapshot under `lab/third_party/loupe` so its deployment does not depend on an unpublished module or a sibling checkout. `PROVENANCE.json` records the extraction baseline, source checkout commit, whether the snapshot includes local changes, and exact core SHA-256; `scripts/build.py` rejects drift from that recorded hash. `lab/loupe-core.patch` contains the companion Loupe change for review or application to the baseline checkout. Do not apply it to the already updated local checkout.
+
+File-size policy belongs to each interface. The browser UI and WASM adapter retain a 16 MiB limit. Loupe's native CLI preserves PE diagnostics, defaults to a 256 MiB input limit, and accepts `-max-file-size-mib N` followed by an optional PE file path. The shared parser retains structural validation without a universal file-size cap. The CLI still reads the bounded file into memory and proceeds into its existing emulator; a larger input budget is not an emulation-memory guarantee.
 
 Change the shared core in Loupe, then sync it:
 
