@@ -25,6 +25,40 @@ function fixture(wide=true, name='.text') {
   const s=opt+size;b.write(name,s,8);b.writeUInt32LE(8,s+8);b.writeUInt32LE(0x1000,s+12);b.writeUInt32LE(512,s+16);b.writeUInt32LE(512,s+20);b.writeUInt32LE(0x60000020,s+36);
   return b;
 }
+function sectionFixture(sections) {
+  // Long PE section names resolve through the real COFF string table.
+  const strings=[Buffer.alloc(4)];const names=[];let stringSize=4;
+  for(const section of sections){
+    if(Buffer.byteLength(section.name)<=8){names.push(section.name);continue;}
+    names.push(`/${stringSize}`);const value=Buffer.from(section.name+'\0');strings.push(value);stringSize+=value.length;
+  }
+  strings[0].writeUInt32LE(stringSize);
+  const stringOffset=0x400+sections.length*0x200;
+  const b=Buffer.alloc(stringOffset+stringSize);fixture().copy(b);b.fill(0,0x188,0x400);
+  b.writeUInt16LE(sections.length,0x86);b.writeUInt32LE(stringOffset,0x8c);
+  b.writeUInt32LE((sections.length+1)*0x1000,0x98+56);b.writeUInt32LE(0x400,0x98+60);
+  sections.forEach((section,i)=>{
+    const s=0x188+i*40, offset=section.data.length?0x400+i*0x200:0;
+    b.write(names[i],s,8);b.writeUInt32LE(section.data.length||64,s+8);b.writeUInt32LE((i+1)*0x1000,s+12);
+    b.writeUInt32LE(section.data.length,s+16);b.writeUInt32LE(offset,s+20);b.writeUInt32LE(0x40000040,s+36);
+    if(offset)section.data.copy(b,offset);
+  });
+  Buffer.concat(strings).copy(b,stringOffset);return b;
+}
+async function assertHexBytes(preview, bytes, offset) {
+  const lines=(await preview.textContent()).split('\n');
+  assert.match(lines.shift(),/^OFFSET\s+00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f\s+ASCII$/);
+  const shown=bytes.subarray(0,128);
+  assert.equal(lines.length,Math.ceil(shown.length/16),'preview row count');
+  for(const [i,line] of lines.entries()){
+    const match=line.match(/^([0-9a-f]{8})  (.{47})  (.*)$/);
+    assert.ok(match,`unaligned hex row: ${line}`);
+    const row=shown.subarray(i*16,(i+1)*16);
+    assert.equal(parseInt(match[1],16),offset+i*16,'absolute file offset');
+    assert.deepEqual(Buffer.from(match[2].replaceAll(' ',''),'hex'),row,'actual bytes, including partial rows');
+    assert.equal(match[3],Array.from(row,b=>b>=0x20&&b<=0x7e?String.fromCharCode(b):'.').join(''),'printable ASCII boundaries');
+  }
+}
 (async()=>{
  fs.mkdirSync(out,{recursive:true});
  const browser=await chromium.launch({headless:true,...(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{})});
@@ -48,14 +82,54 @@ function fixture(wide=true, name='.text') {
  await input.setInputFiles({name:'fixture64.exe',mimeType:'application/octet-stream',buffer:fixture()});
  await page.locator('#inspection').waitFor({state:'visible'});
  assert.match(await page.locator('#inspection').textContent(),/PE32\+/);assert.match(await page.locator('#inspection').textContent(),/0x140001000/);
- await page.locator('summary').click();assert.equal(await page.locator('details[open]').count(),1);assert.ok(await page.locator('.hex-preview').textContent());
+ assert.deepEqual(await page.locator('.lab-spec span').allTextContents(),['ENGINE / LOUPE','MODE / STATIC INSPECTION','RUNTIME / GO · WASM','PROCESSING / LOCAL','EXECUTION / NONE','UPLOAD / NONE']);
+ assert.equal(await page.locator('.section-group').count(),0,'ordinary image does not need section groups');
+ await page.locator('summary').click();assert.equal(await page.locator('details[open]').count(),1);
+ await assertHexBytes(page.locator('.hex-preview'),fixture().subarray(512),512);
+ const sectionData=[
+  {name:'.debug_info',data:Buffer.from(Array.from({length:129},(_,i)=>i))},
+  {name:'.text',data:Buffer.concat([Buffer.from([0x00,0x1f,0x20,0x21,0x3c,0x3e,0x26,0x22,0x27,0x40,0x41,0x7e,0x7f,0x80,0xff,0x0a]),Buffer.from('<img src=x>abcde!'),Buffer.from([0xc3,0x42])])},
+  {name:'.comment',data:Buffer.from('toolchain')},
+  {name:'.pdata',data:Buffer.alloc(16,0x41)},
+  {name:'.bss',data:Buffer.alloc(0)},
+  {name:'.custom',data:Buffer.from([0x81])},
+ ];
+ const mixed=sectionFixture(sectionData);
+ await input.setInputFiles({name:'sections.exe',mimeType:'application/octet-stream',buffer:mixed});
+ await page.locator('#inspection').waitFor({state:'visible'});
+ assert.equal(await page.locator('.section-detail').count(),sectionData.length,'keep every reported section');
+ const groups=page.locator('.section-group');
+ assert.deepEqual(await groups.locator('h4').allTextContents(),['Image / Runtime','Debug / Toolchain']);
+ assert.deepEqual(await groups.nth(0).locator('.section-name').allTextContents(),['.text','.pdata','.bss','.custom']);
+ assert.deepEqual(await groups.nth(1).locator('.section-name').allTextContents(),['.debug_info','.comment']);
+ const textSection=page.locator('.section-detail').filter({has:page.locator('.section-name',{hasText:/^\.text$/})});
+ const debugSection=page.locator('.section-detail').filter({has:page.locator('.section-name',{hasText:/^\.debug_info$/})});
+ await textSection.locator('summary').click();await debugSection.locator('summary').click();
+ assert.equal(await page.locator('details[open]').count(),2,'sections still expand independently');
+ await assertHexBytes(textSection.locator('.hex-preview'),mixed.subarray(0x600,0x600+sectionData[1].data.length),0x600);
+ await assertHexBytes(debugSection.locator('.hex-preview'),mixed.subarray(0x400,0x400+129),0x400);
+ assert.equal(await page.locator('#inspection img').count(),0,'ASCII content rendered as text');
+ const textBar=await textSection.locator('.section-bar').evaluate(e=>parseFloat(e.style.width));
+ assert.ok(Math.abs(textBar-sectionData[1].data.length/129*100)<0.001,'bar scale includes the largest debug section');
+ const emptySection=page.locator('.section-detail').filter({has:page.locator('.section-name',{hasText:/^\.bss$/})});
+ await emptySection.locator('summary').click();assert.equal(await emptySection.locator('.hex-preview').textContent(),'No file-backed bytes.');
  await page.screenshot({path:path.join(out,'lab-result.png'),fullPage:true});
- await page.setViewportSize({width:390,height:900});await page.screenshot({path:path.join(out,'lab-result-mobile.png'),fullPage:true});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
- await page.getByRole('button',{name:'Clear / cancel'}).click();assert.equal(await page.locator('#inspection').isVisible(),false);
+ for(const width of [390,320]){
+  await page.setViewportSize({width,height:900});
+  const preview=textSection.locator('.hex-preview');
+  assert.equal(await preview.evaluate(e=>getComputedStyle(e).whiteSpace),'pre');
+  assert.ok(await preview.evaluate(e=>e.scrollWidth>e.clientWidth),'hex rows have a local horizontal scroll area');
+  await preview.evaluate(e=>{e.scrollLeft=0;});await assertKeyboardScroll(page,preview);
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,`result overflow at ${width}`);
+  if(width===390)await page.screenshot({path:path.join(out,'lab-result-mobile.png'),fullPage:true});
+ }
+ await page.getByRole('button',{name:'Clear file',exact:true}).click();assert.equal(await page.locator('#inspection').isVisible(),false);
+ assert.equal(await page.locator('[data-clear]').textContent(),'Clear / cancel');
  await input.setInputFiles({name:'fixture32.exe',mimeType:'application/octet-stream',buffer:fixture(false,'<img>')});
  await page.locator('#inspection').waitFor({state:'visible'});assert.match(await page.locator('#inspection').textContent(),/0x401000/);assert.equal(await page.locator('#inspection img').count(),0,'untrusted content rendered as HTML');
  await input.setInputFiles({name:'bad.exe',mimeType:'application/octet-stream',buffer:Buffer.from('not a PE')});
  await page.getByRole('status').filter({hasText:'expected a Windows PE file'}).waitFor();assert.equal(await page.locator('#inspection').isVisible(),false);
+ assert.equal(await page.getByRole('button',{name:'Clear / cancel',exact:true}).isVisible(),true);
  await input.setInputFiles({name:'large.exe',mimeType:'application/octet-stream',buffer:Buffer.alloc(16*1024*1024+1)});
  await page.getByRole('status').filter({hasText:'16 MiB limit'}).waitFor();
  await input.setInputFiles({name:'empty.exe',mimeType:'application/octet-stream',buffer:Buffer.alloc(0)});
@@ -64,8 +138,12 @@ function fixture(wide=true, name='.text') {
  await page.route('**/*.wasm',route=>route.abort());
  await input.setInputFiles({name:'fixture.exe',mimeType:'application/octet-stream',buffer:fixture()});
  await page.getByRole('status').filter({hasText:'could not'}).waitFor();await page.unroute('**/*.wasm');
+ let cancelledRequest;const cancellationPending=new Promise(resolve=>{cancelledRequest=resolve;});
+ await page.route('**/*.wasm',route=>cancelledRequest(route));
  await input.setInputFiles({name:'fixture.exe',mimeType:'application/octet-stream',buffer:fixture()});
+ const cancelledRoute=await cancellationPending;
  await page.getByRole('button',{name:'Clear / cancel'}).click();assert.equal(await page.locator('#inspection').isVisible(),false);
+ await cancelledRoute.abort();await page.unroute('**/*.wasm');
  await input.setInputFiles({name:'fixture.exe',mimeType:'application/octet-stream',buffer:fixture()});await page.locator('#inspection').waitFor({state:'visible'});
  // Drag/drop exercises the same core; a hung engine must remain cancellable and time-bounded.
  const payload=Array.from(fixture());
@@ -107,5 +185,5 @@ function fixture(wide=true, name='.text') {
  for(const link of await staticPage.locator('.site-header nav a').all()){
   const bounds=await link.boundingBox();assert.ok(bounds.width>=44&&bounds.height>=44,'small primary-navigation target');
  }
- await browser.close();console.log('PASS: 40 responsive route checks; PE32/PE32+; hostile text; malformed/empty/oversize; clear/cancel; drop/keyboard; 15s timeout; engine failure/recovery; local GET-only traffic; no storage; no-JS record navigation; keyboard code/table scrolling; navigation targets; unchanged footer text.');
+ await browser.close();console.log('PASS: 40 responsive route checks; PE32/PE32+; actual hex offsets/bytes/ASCII and partial rows; section grouping; runtime metadata; mobile hex scrolling; hostile text; malformed/empty/oversize; clear/cancel; drop/keyboard; 15s timeout; engine failure/recovery; local GET-only traffic; no storage; no-JS record navigation; keyboard code/table scrolling; navigation targets; unchanged footer text.');
 })().catch(e=>{console.error(e);process.exitCode=1;});

@@ -6,10 +6,34 @@ const output = root.querySelector("#inspection");
 const clear = root.querySelector("[data-clear]");
 let worker, timer, generation = 0;
 const stop = () => { worker?.terminate(); worker = null; clearTimeout(timer); };
-const reset = () => { ++generation; stop(); output.replaceChildren(); output.hidden = true; input.value = ""; clear.hidden = true; root.removeAttribute("aria-busy"); };
+const reset = () => { ++generation; stop(); output.replaceChildren(); output.hidden = true; input.value = ""; clear.hidden = true; clear.textContent = "Clear / cancel"; root.removeAttribute("aria-busy"); };
 const node = (tag, text, cls) => { const n = document.createElement(tag); if (text !== undefined) n.textContent = text; if(cls) n.className=cls; return n; };
 const hex = value => `0x${value.toString(16).toUpperCase()}`;
 const field = (list, label, value) => { const pair=node("div"); pair.append(node("dt", label),node("dd",String(value))); list.append(pair); };
+// Section names only guide presentation; unknown names stay with the image sections.
+const isToolchainSection = section => /^(?:\.(?:z?debug)(?:[._$]|$)|\.gnu_debug(?:link|altlink)$|\.gnu\.lto_|\.(?:stab|stabstr|comment|drectve|llvm_addrsig)$)/i.test(section.name);
+function hexPreview(section) {
+  const preview=node("pre",undefined,"hex-preview");
+  preview.tabIndex=0;
+  preview.setAttribute("aria-label",`${section.name || "Unnamed section"} file bytes: absolute file offset, hexadecimal, and ASCII`);
+  if (!section.preview) {
+    preview.textContent="No file-backed bytes.";
+    return preview;
+  }
+  // Loupe returns the actual preview bytes as space-separated hexadecimal pairs.
+  const bytes=section.preview.split(" ");
+  preview.append(node("span","OFFSET    00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f  ASCII\n","hex-header"));
+  for (let i=0;i<bytes.length;i+=16) {
+    const row=bytes.slice(i,i+16);
+    const offset=(section.offset+i).toString(16).padStart(8,"0");
+    const ascii=row.map(byte=>{
+      const value=parseInt(byte,16);
+      return value>=0x20 && value<=0x7e ? String.fromCharCode(value) : ".";
+    }).join("");
+    preview.append(node("span",offset,"hex-offset"),`  ${row.join(" ").padEnd(47," ")}  ${ascii}${i+16<bytes.length ? "\n" : ""}`);
+  }
+  return preview;
+}
 function render(result, name) {
   const heading=node("h2",name); heading.tabIndex=-1;
   output.append(node("p","INSPECTION / COMPLETE","eyebrow"),heading);
@@ -20,17 +44,28 @@ function render(result, name) {
   const reference=node("a","How file offsets and RVAs relate →");reference.href=root.dataset.research;note.append(reference);output.append(note);
   output.append(node("h3","Sections"),node("p","Select a section to inspect its declared layout and first 128 file bytes. Bar length shows raw size relative to the largest section.","muted"));
   const largest=Math.max(1,...result.sections.map(s=>s.rawSize));
-  for (const section of result.sections) {
-    const details=node("details",undefined,"section-detail");
-    const summary=node("summary");
-    summary.append(node("span",section.name || "(unnamed)","section-name"),node("span",section.permissions,"permissions"),node("span",`${section.rawSize.toLocaleString()} B`,"section-size"));
-    const bar=node("span",undefined,"section-bar");bar.style.width=`${section.rawSize/largest*100}%`;bar.setAttribute("aria-hidden","true");summary.append(bar);
-    const fields=node("dl",undefined,"inspection-meta");
-    for(const [label,value] of [["Virtual address (RVA)",section.rva],["Virtual size",`${section.virtualSize.toLocaleString()} B`],["File offset",hex(section.offset)],["Raw size",`${section.rawSize.toLocaleString()} B`],["Declared permissions",section.permissions]]) field(fields,label,value);
-    const preview=node("pre",section.preview ? section.preview.match(/(?:[0-9a-f]{2} ?){1,16}/g).join("\n") : "No file-backed bytes.","hex-preview");
-    preview.tabIndex=0; preview.setAttribute("aria-label",`${section.name} hex preview`);
-    details.append(summary,fields,node("p","File bytes / hexadecimal","eyebrow"),preview);output.append(details);
+  const imageSections=[], toolchainSections=[];
+  for (const section of result.sections) (isToolchainSection(section) ? toolchainSections : imageSections).push(section);
+  const groups=toolchainSections.length ? [["Image / Runtime",imageSections],["Debug / Toolchain",toolchainSections]] : [[null,imageSections]];
+  for (const [label,sections] of groups) {
+    if (!sections.length) continue;
+    const group=label ? node("section",undefined,"section-group") : output;
+    if (label) {
+      group.setAttribute("aria-label",label);
+      group.append(node("h4",label,"eyebrow"));
+      output.append(group);
+    }
+    for (const section of sections) {
+      const details=node("details",undefined,"section-detail");
+      const summary=node("summary");
+      summary.append(node("span",section.name || "(unnamed)","section-name"),node("span",section.permissions,"permissions"),node("span",`${section.rawSize.toLocaleString()} B`,"section-size"));
+      const bar=node("span",undefined,"section-bar");bar.style.width=`${section.rawSize/largest*100}%`;bar.setAttribute("aria-hidden","true");summary.append(bar);
+      const fields=node("dl",undefined,"inspection-meta");
+      for(const [label,value] of [["Virtual address (RVA)",section.rva],["Virtual size",`${section.virtualSize.toLocaleString()} B`],["File offset",hex(section.offset)],["Raw size",`${section.rawSize.toLocaleString()} B`],["Declared permissions",section.permissions]]) field(fields,label,value);
+      details.append(summary,fields,node("p","File bytes / hexadecimal · ASCII","eyebrow"),hexPreview(section));group.append(details);
+    }
   }
+  clear.textContent="Clear file";
   output.hidden=false; heading.focus();
 }
 async function inspect(file) {

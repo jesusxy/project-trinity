@@ -851,6 +851,12 @@ pre,code {
   margin:8px 0 0;
   overflow-wrap:anywhere;
 }
+.section-group {
+  margin-top:30px;
+}
+.section-group>h4 {
+  margin:0 0 14px;
+}
 .section-detail {
   border-top:1px solid var(--line);
 }
@@ -900,10 +906,16 @@ pre,code {
 .hex-preview {
   font:12px/1.8 var(--type-system);
   overflow:auto;
+  white-space:pre;
+  overflow-wrap:normal;
+  word-break:normal;
   background:var(--ink);
   color:var(--paper);
   padding:25px;
   max-width:100%;
+}
+.hex-header,.hex-offset {
+  opacity:.65;
 }
 .noscript-note {
   padding:20px;
