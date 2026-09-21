@@ -1989,6 +1989,13 @@ pre,code {
   .article-content h2,
   .article-content h3 { scroll-margin-top: 20px; }
 
-  .footer-quote { font-size: clamp(24px, 6.5vw, 32px); line-height: 1.12; max-width: 19ch; text-wrap: initial; }
-  .footer-quote > span { display: block; }
+  .footer-quote {
+    font-size: clamp(24px, 6.5vw, 32px);
+    line-height: 1.12;
+    width: calc(100% - clamp(28px, 8vw, 56px));
+    max-width: 22ch;
+    margin-left: auto;
+    text-wrap: balance;
+  }
+  .footer-quote > span { display: inline; }
 }
