@@ -9,7 +9,7 @@ const stop = () => { worker?.terminate(); worker = null; clearTimeout(timer); };
 const reset = () => { ++generation; stop(); output.replaceChildren(); output.hidden = true; input.value = ""; clear.hidden = true; clear.textContent = "Clear / cancel"; root.removeAttribute("aria-busy"); };
 const node = (tag, text, cls) => { const n = document.createElement(tag); if (text !== undefined) n.textContent = text; if(cls) n.className=cls; return n; };
 const hex = value => `0x${value.toString(16).toUpperCase()}`;
-const field = (list, label, value) => { const pair=node("div"); pair.append(node("dt", label),node("dd",String(value))); list.append(pair); };
+const field = (list, label, value, cls) => { const pair=node("div",undefined,cls); pair.append(node("dt", label),node("dd",String(value))); list.append(pair); };
 // Section names only guide presentation; unknown names stay with the image sections.
 const isToolchainSection = section => /^(?:\.(?:z?debug)(?:[._$]|$)|\.gnu_debug(?:link|altlink)$|\.gnu\.lto_|\.(?:stab|stabstr|comment|drectve|llvm_addrsig)$)/i.test(section.name);
 function hexPreview(section) {
@@ -37,8 +37,9 @@ function hexPreview(section) {
 function render(result, name) {
   const heading=node("h2",name); heading.tabIndex=-1;
   output.append(node("p","INSPECTION / COMPLETE","eyebrow"),heading);
-  const meta=node("dl",undefined,"inspection-meta");
-  for (const [key,value] of [["Format",result.format],["Machine",result.machine],["File size",`${result.size.toLocaleString()} B`],["Image base",result.imageBase],["Entry RVA",result.entryRVA],["Preferred entry VA",result.entryVA],["Sections",result.sections.length],["Image size",`${result.imageSize.toLocaleString()} B`],["Headers",`${result.headerSize} B`],["Section alignment",hex(result.alignment)]]) field(meta,key,value);
+  const meta=node("dl",undefined,"inspection-meta inspection-summary");
+  for (const [key,value] of [["Format",result.format],["Machine",result.machine],["Entry RVA",result.entryRVA],["Image base",result.imageBase],["Sections",result.sections.length]]) field(meta,key,value,"inspection-primary");
+  for (const [key,value] of [["File size",`${result.size.toLocaleString()} B`],["Preferred entry VA",result.entryVA],["Image size",`${result.imageSize.toLocaleString()} B`],["Headers",`${result.headerSize} B`],["Section alignment",hex(result.alignment)]]) field(meta,key,value);
   output.append(meta);
   const note=node("p","Addresses describe the file’s preferred layout; nothing has been mapped or executed. ");
   const reference=node("a","How file offsets and RVAs relate →");reference.href=root.dataset.research;note.append(reference);output.append(note);

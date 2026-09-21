@@ -3,7 +3,7 @@
 {{ end }}
 {{ define "main" }}
 <header class="lab-header"><div><p class="eyebrow">LAB-001 / PRJ-001 / LIVE</p><h1>Loupe</h1></div><div><p class="page-deck">A closer look at<br>the executable.</p><a href="{{ "projects/loupe/" | relURL }}">Project, architecture &amp; development notes ↗</a></div></header>
-<div class="lab-spec"><span>ENGINE / LOUPE</span><span>MODE / STATIC INSPECTION</span><span>RUNTIME / GO · WASM</span><span>PROCESSING / LOCAL</span><span>EXECUTION / NONE</span><span>UPLOAD / NONE</span></div>
+<div class="lab-spec"><span><span class="lab-spec-label">ENGINE /</span> LOUPE</span><span><span class="lab-spec-label">MODE /</span> STATIC INSPECTION</span><span><span class="lab-spec-label">RUNTIME /</span> GO · WASM</span><span><span class="lab-spec-label">PROCESSING /</span> LOCAL</span><span><span class="lab-spec-label">EXECUTION /</span> NONE</span><span><span class="lab-spec-label">UPLOAD /</span> NONE</span></div>
 {{ $worker := resources.Get "js/loupe-worker.js" | minify | fingerprint }}
 {{ $runtime := resources.Get "generated/wasm_exec.js" | minify | fingerprint }}
 {{ $wasm := resources.Get "generated/loupe.wasm" | fingerprint }}

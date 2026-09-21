@@ -82,7 +82,7 @@ async function assertHexBytes(preview, bytes, offset) {
  await input.setInputFiles({name:'fixture64.exe',mimeType:'application/octet-stream',buffer:fixture()});
  await page.locator('#inspection').waitFor({state:'visible'});
  assert.match(await page.locator('#inspection').textContent(),/PE32\+/);assert.match(await page.locator('#inspection').textContent(),/0x140001000/);
- assert.deepEqual(await page.locator('.lab-spec span').allTextContents(),['ENGINE / LOUPE','MODE / STATIC INSPECTION','RUNTIME / GO · WASM','PROCESSING / LOCAL','EXECUTION / NONE','UPLOAD / NONE']);
+ assert.deepEqual(await page.locator('.lab-spec > span').allTextContents(),['ENGINE / LOUPE','MODE / STATIC INSPECTION','RUNTIME / GO · WASM','PROCESSING / LOCAL','EXECUTION / NONE','UPLOAD / NONE']);
  assert.equal(await page.locator('.section-group').count(),0,'ordinary image does not need section groups');
  await page.locator('summary').click();assert.equal(await page.locator('details[open]').count(),1);
  await assertHexBytes(page.locator('.hex-preview'),fixture().subarray(512),512);
@@ -104,10 +104,20 @@ async function assertHexBytes(preview, bytes, offset) {
  assert.deepEqual(await groups.nth(1).locator('.section-name').allTextContents(),['.debug_info','.comment']);
  const textSection=page.locator('.section-detail').filter({has:page.locator('.section-name',{hasText:/^\.text$/})});
  const debugSection=page.locator('.section-detail').filter({has:page.locator('.section-name',{hasText:/^\.debug_info$/})});
+ const barAppearance=()=>textSection.locator('.section-bar').evaluate(e=>{
+  const css=getComputedStyle(e);return {width:css.width,height:css.height,color:css.backgroundColor};
+ });
+ const closedBar=await barAppearance();
  await textSection.locator('summary').click();await debugSection.locator('summary').click();
+ assert.deepEqual(await barAppearance(),closedBar,'opening a section must not change its quantitative bar');
+ await textSection.locator('summary').click();
+ assert.deepEqual(await barAppearance(),closedBar,'closing a section must not change its quantitative bar');
+ await textSection.locator('summary').click();
  assert.equal(await page.locator('details[open]').count(),2,'sections still expand independently');
  await assertHexBytes(textSection.locator('.hex-preview'),mixed.subarray(0x600,0x600+sectionData[1].data.length),0x600);
  await assertHexBytes(debugSection.locator('.hex-preview'),mixed.subarray(0x400,0x400+129),0x400);
+ assert.ok(await textSection.locator('.hex-preview').evaluate(e=>e.clientWidth<e.closest('details').clientWidth),'desktop hex panel should fit its content');
+ assert.ok(await textSection.locator('.hex-preview').evaluate(e=>e.scrollWidth===e.clientWidth),'all byte columns should fit on desktop');
  assert.equal(await page.locator('#inspection img').count(),0,'ASCII content rendered as text');
  const textBar=await textSection.locator('.section-bar').evaluate(e=>parseFloat(e.style.width));
  assert.ok(Math.abs(textBar-sectionData[1].data.length/129*100)<0.001,'bar scale includes the largest debug section');
