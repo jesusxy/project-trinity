@@ -597,6 +597,9 @@ pre,code {
 .contents {
   font-size:13px;
 }
+.contents-mobile {
+  display:none;
+}
 .contents ul {
   list-style:none;
   padding:0;
@@ -1925,4 +1928,67 @@ pre,code {
   .reference-REF-F { display: block; }
   .footer-signature { margin-top: 35px; }
   .footer-quote { font-size: 30px; }
+}
+
+/* Narrow screens: retain the record identity, bring the reading surface forward. */
+@media screen and (max-width: 700px) {
+  .site-header nav a { min-width: 44px; min-height: 44px; text-align: center; }
+  .site-header nav a:first-child { text-align: left; }
+  .site-header nav a:last-child { text-align: right; }
+
+  .research-record .page-header { padding-bottom: 18px; }
+  .research-record .record-metadata { margin: 24px 0 0; row-gap: 14px; }
+  .research-record .record-metadata dd { margin-top: 3px; }
+  .research-record .research-layout { margin-top: 0; padding-top: 0; gap: 26px; }
+  .research-record .contents { padding-bottom: 0; }
+  .contents > .revision-marker,
+  .contents > .contents-label,
+  .contents > #TableOfContents { display: none; }
+  .contents-mobile { display: block; border-top: 1px solid var(--line); }
+  .contents-mobile > summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    min-height: 48px;
+    padding: 12px 0;
+    list-style: none;
+    cursor: pointer;
+    font: 10px/1.6 var(--type-system);
+    letter-spacing: .065em;
+    color: var(--cobalt-dark);
+  }
+  .contents-mobile > summary::-webkit-details-marker { display: none; }
+  .contents-toggle::before { content: "+"; font-size: 17px; }
+  .contents-mobile[open] .contents-toggle::before { content: "−"; }
+  .contents-mobile ul { margin: 0 0 12px; }
+  .contents-mobile li { padding: 0; }
+  .contents-mobile a { display: block; padding: 12px 0; min-height: 44px; line-height: 1.5; }
+  .contents-mobile ul ul { margin: 0 0 0 16px; }
+
+  .section-research.page-section .index-header { padding-top: 36px; padding-bottom: 20px; }
+  .section-research.page-section .index-header h1 { font-size: 50px; margin: 22px 0; }
+  .section-research.page-section .index-header .page-deck > :last-child { margin-bottom: 0; }
+  .section-research.page-section .index-records { margin-top: 24px; }
+
+  .article-content { overflow-wrap: anywhere; }
+  .article-content pre,
+  .research-record .article-content pre {
+    max-width: 100%;
+    overflow-x: auto;
+    white-space: pre;
+    overflow-wrap: normal;
+    word-break: normal;
+    font-size: 13px;
+    line-height: 1.65;
+  }
+  .article-content pre code { white-space: inherit; overflow-wrap: normal; word-break: normal; font-size: inherit; }
+  .article-content table { display: block; max-width: 100%; overflow-x: auto; font-size: 14px; }
+  .article-content th,
+  .article-content td { min-width: 10rem; }
+  .article-content h2,
+  .article-content h3 { scroll-margin-top: 20px; }
+
+  .footer-quote { font-size: clamp(24px, 6.5vw, 32px); line-height: 1.12; max-width: 19ch; text-wrap: initial; }
+  .footer-quote > span { display: block; }
 }

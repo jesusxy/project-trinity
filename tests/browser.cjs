@@ -5,6 +5,16 @@ const path = require('node:path');
 const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const base = process.env.TRINITY_URL || 'http://127.0.0.1:1415';
 const out = process.env.TRINITY_QA || 'tests/results';
+async function assertKeyboardScroll(page, element) {
+  await element.focus();
+  await page.keyboard.press('ArrowRight');
+  // Poll from Node: page-side timers do not run with JavaScript disabled.
+  for (let attempt=0;attempt<20;attempt++) {
+    if (await element.evaluate(e=>e.scrollLeft>0)) return;
+    await new Promise(resolve=>setTimeout(resolve,50));
+  }
+  assert.fail('focused technical content did not scroll with the keyboard');
+}
 function fixture(wide=true, name='.text') {
   const b=Buffer.alloc(1024);b.write('MZ');b.writeUInt32LE(0x80,0x3c);b.write('PE\0\0',0x80);
   const opt=0x98, size=wide?240:224;
@@ -74,5 +84,28 @@ function fixture(wide=true, name='.text') {
  assert.equal(requests.filter(r=>!r.url.startsWith(base)).length,0,'unexpected external requests');
  assert.deepEqual(errors,[]);
  const noJS=await browser.newContext({javaScriptEnabled:false});const staticPage=await noJS.newPage();await staticPage.goto(base+'/labs/');assert.ok(await staticPage.locator('noscript').isVisible());await staticPage.goto(base+'/');assert.equal(await staticPage.locator('h1').count(),1);
- await browser.close();console.log('PASS: 40 responsive route checks; PE32/PE32+; hostile text; malformed/empty/oversize; clear/cancel; drop/keyboard; 15s timeout; engine failure/recovery; local GET-only traffic; no storage; no-JS fallback.');
+ // The mobile record index is a native disclosure and works without JavaScript.
+ await staticPage.setViewportSize({width:320,height:900});
+ await staticPage.goto(base+'/research/pe-address-spaces/');
+ const contents=staticPage.locator('.contents-mobile');
+ assert.equal(await contents.getAttribute('open'),null);
+ assert.equal(await staticPage.locator('.revision-marker').isVisible(),false);
+ await contents.locator('summary').focus();await staticPage.keyboard.press('Enter');
+ assert.equal(await contents.locator('nav').isVisible(),true);
+ for(const link of await contents.getByRole('link').all()) assert.ok((await link.boundingBox()).height>=44,'small section-navigation target');
+ await contents.getByRole('link',{name:'A section has two extents'}).click();
+ assert.ok(staticPage.url().endsWith('#a-section-has-two-extents'));
+ const code=staticPage.locator('.article-content pre').first();
+ assert.equal(await code.evaluate(e=>getComputedStyle(e).whiteSpace),'pre');
+ assert.ok(await code.evaluate(e=>e.scrollWidth>e.clientWidth),'long code should scroll rather than wrap');
+ await assertKeyboardScroll(staticPage,code);
+ const table=staticPage.locator('.article-content table');
+ assert.ok(await table.evaluate(e=>e.scrollWidth>e.clientWidth),'wide table should have its own scroll area');
+ await assertKeyboardScroll(staticPage,table);
+ assert.equal(await staticPage.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+ assert.equal(await staticPage.locator('.footer-quote').textContent(),'"The world will see the great result from my hands"');
+ for(const link of await staticPage.locator('.site-header nav a').all()){
+  const bounds=await link.boundingBox();assert.ok(bounds.width>=44&&bounds.height>=44,'small primary-navigation target');
+ }
+ await browser.close();console.log('PASS: 40 responsive route checks; PE32/PE32+; hostile text; malformed/empty/oversize; clear/cancel; drop/keyboard; 15s timeout; engine failure/recovery; local GET-only traffic; no storage; no-JS record navigation; keyboard code/table scrolling; navigation targets; unchanged footer text.');
 })().catch(e=>{console.error(e);process.exitCode=1;});
