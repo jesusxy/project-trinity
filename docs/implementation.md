@@ -23,9 +23,9 @@ Work → Research → Lab → Canon forms a small navigable system. Research rec
 
 ## Loupe integration
 
-`ImageInfo` and the PE field extraction/architecture checks were extracted from the real adjacent Loupe checkout (`9439f51f`) into `loupe/inspect`. The native CLI now opens a bounded reader and calls `inspect.Parse`. A thin Go adapter compiles that same package for `GOOS=js GOARCH=wasm`; it only serializes the resulting image model and bounded byte previews. It has no Unicorn dependency.
+`ImageInfo` and the PE field extraction/architecture checks were extracted from the real adjacent Loupe checkout (`9439f51f`) into Loupe's `inspect` package. The native CLI now opens a bounded reader and calls `inspect.Parse`. Both consumers import `github.com/jesusxy/loupe/inspect`. A thin Go adapter compiles that same package for `GOOS=js GOARCH=wasm`; it only serializes the resulting image model and bounded byte previews. The inspection package and WASM dependency graph have no Unicorn dependency.
 
-Trinity vendors an identical source snapshot with a verified core hash and companion patch because the extraction is not yet an upstream release. The initial shared package and native CLI refactor were committed in Loupe as `e129f1551b1e54178957d027b08d892bcd2da2ad`; provenance records the current source checkout and any local changes. There is no separate JavaScript PE parser. Browser-specific code handles files, worker lifecycle, and rendering. Native package tests and compilation passed locally with the installed Unicorn library; native emulation was not executed.
+The initial shared package and native CLI refactor were committed in Loupe as `e129f1551b1e54178957d027b08d892bcd2da2ad`. Trinity initially checked in a source snapshot, but now consumes the upstream module at the immutable version pinned in `lab/go.mod`, with checksums in `lab/go.sum`. Builds resolve that dependency through Go's module cache without a sibling checkout. The copied parser, synchronization script, and companion patch have been removed. This changes dependency distribution only; the parser's code and behavior are unchanged. There is no separate JavaScript PE parser. Browser-specific code handles files, worker lifecycle, and rendering. During the initial extraction, native package tests and compilation passed locally with the installed Unicorn library; native emulation was not executed.
 
 PE diagnostics remain in the native CLI. File-size budgets are interface policy: 256 MiB by default for the CLI, configurable with `-max-file-size-mib`, and 16 MiB for the browser. The CLI checks file size before reading and enforces the budget during reading. The core accepts already allocated bytes and keeps its structural checks. This does not change the native emulator's memory requirements or guarantee that it can emulate every larger file.
 
@@ -47,6 +47,8 @@ The underlying [Go PE reader is not hardened against adversarial input](https://
 
 `scripts/build.py` takes the source commit from `GITHUB_SHA` or local `git rev-parse HEAD`, checks the working tree for local changes, timestamps the actual build in UTC, and records GitHub run ID/attempt/link when available. Hugo renders this near the unchanged footer. No deployment time is claimed. Generated data is ignored and regenerated for every scripted build.
 
+The build also tests and vets the pinned `github.com/jesusxy/loupe/inspect` package before compiling the WASM adapter. It writes the resolved module path, version, and exact `EntryPointVA` assignment from the downloaded `inspect/inspect.go` to ignored `data/loupe_core.json`. Hugo renders the source excerpt from that data, so the project page follows the same dependency as the Lab. The build fails if the assignment cannot be extracted as expected. Update the dependency in `lab/` with `go get github.com/jesusxy/loupe@<commit-or-version>` and `go mod tidy`, then rebuild and review both module files.
+
 ## Performance measurement
 
 Measured from local minified production output; gzip numbers are estimates, not observed hosting transfer sizes.
@@ -65,7 +67,7 @@ There are no external fonts or frontend framework dependencies. Hugo minifies an
 ## Validation
 
 - Hugo production build and generated-link/anchor/heading/footer/script-isolation checks.
-- `go test ./...` and `go vet ./...` on the shared core; adjacent Loupe CLI compilation/tests.
+- `go test github.com/jesusxy/loupe/inspect` and `go vet github.com/jesusxy/loupe/inspect` from `lab/` exercise the pinned shared core; adjacent Loupe CLI compilation/tests were also checked during extraction.
 - About 1.27 million fuzz inputs over 15 seconds without a failure.
 - 40 viewport/route checks: ten routes at 1440, 768, 390, and 320 px; no horizontal page overflow.
 - Browser PE32 and PE32+ fixtures, actual existing Loupe fixture (read only), hostile section text, malformed/empty/oversize inputs, cancellation, engine failure/recovery, drag/drop, keyboard disclosure, the 15-second worker deadline, and no-JS fallback.
@@ -76,6 +78,5 @@ Browser verification used headless Brave/Chromium locally. CI uses Chromium. Saf
 
 ## Strongest next steps
 
-1. Publish/release the shared package in Loupe and replace the source snapshot with a versioned module.
-2. Add a bounded static import reader in Loupe, with corrupted descriptor/thunk fixtures and links into research.
-3. Stabilize the native mapping/API model and define a versioned trace format before presenting real execution instrumentation.
+1. Add a bounded static import reader in Loupe, with corrupted descriptor/thunk fixtures and links into research.
+2. Stabilize the native mapping/API model and define a versioned trace format before presenting real execution instrumentation.

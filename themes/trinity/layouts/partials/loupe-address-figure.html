@@ -1,9 +1,8 @@
-{{ $source := readFile "lab/third_party/loupe/inspect/inspect.go" }}
-{{ $lines := findRE `imageInfo.EntryPointVA = [^\n]+` $source }}
-{{ if ne (len $lines) 1 }}{{ errorf "Loupe address artifact no longer matches the shared core; review the figure." }}{{ end }}
+{{ $core := hugo.Data.loupe_core }}
+{{ if not $core.entry_point_assignment }}{{ errorf "Loupe source excerpt is missing; run python3 scripts/build.py before Hugo." }}{{ end }}
 <figure class="loupe-address-figure">
   <div class="artifact-caption"><span class="eyebrow">INSPECT / PREFERRED ENTRY ADDRESS</span><p>Before execution,<br>an address has to mean something.</p></div>
   <div class="address-expression" aria-label="Image base plus entry point RVA"><span>ImageBase</span><span><b aria-hidden="true">+</b> EntryPointRVA</span></div>
-  <pre><code>{{ index $lines 0 }}</code></pre>
+  <pre><code>{{ $core.entry_point_assignment }}</code></pre>
   <figcaption><span class="eyebrow">SOURCE / inspect/inspect.go</span><span>From Loupe’s shared core. <a href="{{ "research/pe-address-spaces/" | relURL }}">File offset ≠ virtual address ↗</a></span></figcaption>
 </figure>

@@ -1,9 +1,0 @@
-{
-  "repository": "https://github.com/jesusxy/loupe",
-  "base_commit": "9439f51fc84946046d6755c76cddeed58ba401e8",
-  "source": "inspect/inspect.go (extracted from cmd/main.go)",
-  "source_commit": "e129f1551b1e54178957d027b08d892bcd2da2ad",
-  "source_dirty": true,
-  "core_sha256": "47e38a940b3d7e1d680c8a9cedfb72912a81e7398362d0a46add1d51f410819f",
-  "note": "Shared inspection core with client-owned file-size budgets. source_commit identifies the checkout HEAD; source_dirty records local changes. Companion patch applies to base_commit."
-}

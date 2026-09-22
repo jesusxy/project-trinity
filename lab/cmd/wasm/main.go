@@ -5,8 +5,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"loupe/inspect"
 	"syscall/js"
+
+	"github.com/jesusxy/loupe/inspect"
 )
 
 // Browser memory budget; the native CLI controls its own input limit.

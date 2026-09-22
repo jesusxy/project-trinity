@@ -1,2 +1,0 @@
-# Preserve unified-diff context whitespace in the Loupe companion patch.
-lab/loupe-core.patch -whitespace

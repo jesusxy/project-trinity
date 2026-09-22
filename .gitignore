@@ -3,5 +3,6 @@ public/
 resources/
 assets/generated/
 data/build.json
+data/loupe_core.json
 __pycache__/
 tests/results/

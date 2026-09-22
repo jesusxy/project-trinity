@@ -12,7 +12,7 @@ python3 scripts/verify-site.py
 hugo server --disableFastRender
 ```
 
-Run the build script before the first Hugo preview. It tests and compiles Loupe, copies the matching Go WASM runtime, writes real build metadata, and runs Hugo. Generated WASM, runtime, build metadata, and `public/` are ignored. After changing Go source, rebuild; Hugo handles content, CSS and JavaScript edits directly. Preview build metadata describes the last scripted build.
+Run the build script before the first Hugo preview. It resolves the pinned Loupe module, tests its inspection package, compiles the WASM adapter, copies the matching Go WASM runtime, writes real build metadata and the source excerpt, and runs Hugo. Go downloads dependencies on the first build and caches them for reuse; no sibling Loupe checkout is needed. Generated WASM, runtime, build metadata, source-excerpt data, and `public/` are ignored. After changing Go source or the pinned module version, rebuild; Hugo handles content, CSS and JavaScript edits directly. Preview build metadata describes the last scripted build.
 
 ## Structure
 
@@ -21,8 +21,8 @@ Run the build script before the first Hugo preview. It tests and compiles Loupe,
 - `layouts/research/`: revision-aware research template.
 - `assets/css/style.css`: shared design tokens, layout, and responsive rules; processed by Hugo Pipes.
 - `assets/js/`: Lab controller and worker only. Other pages load no JavaScript.
-- `lab/`: Go/WASM adapter and a portable snapshot of Loupe's shared inspection package.
-- `scripts/`: reproducible build, core synchronization, and generated-site checks.
+- `lab/`: Go/WASM adapter with Loupe pinned in `go.mod` and checksums in `go.sum`.
+- `scripts/`: reproducible build and generated-site checks.
 - `tests/browser.cjs`: responsive and browser integration checks.
 
 ## Research records
@@ -35,27 +35,32 @@ The archetype starts as a draft. Assign a unique `REC-` identifier, a substantiv
 
 ## Loupe source ownership
 
-Loupe owns `inspect/inspect.go`. It was extracted from Loupe's `cmd/main.go` at `9439f51fc84946046d6755c76cddeed58ba401e8`; the adjacent local Loupe CLI consumes it in local commit `e129f1551b1e54178957d027b08d892bcd2da2ad`. The package has **not** been published as an upstream release.
+Loupe owns `inspect/inspect.go`. It was extracted from Loupe's `cmd/main.go` at `9439f51fc84946046d6755c76cddeed58ba401e8`; the initial shared package and native CLI refactor were committed in Loupe as `e129f1551b1e54178957d027b08d892bcd2da2ad`. Both the native CLI and Trinity's WASM adapter import `github.com/jesusxy/loupe/inspect`.
 
-Trinity checks in an identical source snapshot under `lab/third_party/loupe` so its deployment does not depend on an unpublished module or a sibling checkout. `PROVENANCE.json` records the extraction baseline, source checkout commit, whether the snapshot includes local changes, and exact core SHA-256; `scripts/build.py` rejects drift from that recorded hash. `lab/loupe-core.patch` contains the companion Loupe change for review or application to the baseline checkout. Do not apply it to the already updated local checkout.
+Trinity consumes the upstream Go module at the immutable version recorded in `lab/go.mod`, with downloaded module contents verified against `lab/go.sum`. There is no checked-in copy of the parser, synchronization script, or companion patch. `scripts/build.py` tests the pinned inspection package and extracts the exact `EntryPointVA` assignment from that downloaded source into ignored `data/loupe_core.json`, alongside its module path and version. Hugo uses this generated data for the Loupe project's source excerpt. The native CLI's Unicorn dependency is outside the inspection package and WASM dependency graph.
 
 File-size policy belongs to each interface. The browser UI and WASM adapter retain a 16 MiB limit. Loupe's native CLI preserves PE diagnostics, defaults to a 256 MiB input limit, and accepts `-max-file-size-mib N` followed by an optional PE file path. The shared parser retains structural validation without a universal file-size cap. The CLI still reads the bounded file into memory and proceeds into its existing emulator; a larger input budget is not an emulation-memory guarantee.
 
-Change the shared core in Loupe, then sync it:
+Change and publish the shared core in Loupe, then update Trinity's dependency to the desired commit or version:
 
 ```sh
-python3 scripts/sync-loupe.py ../loupe
+(cd lab && go get github.com/jesusxy/loupe@'<commit-or-version>' && go mod tidy)
 python3 scripts/build.py
 ```
 
-The sync script requires the native CLI to consume the shared package and refreshes the source, tests, provenance, and companion patch. Move to a versioned upstream module after the Loupe change is published and released.
+Replace `<commit-or-version>` with a published commit hash or tag, review the `go.mod`/`go.sum` changes, and commit both files. This dependency arrangement changes source distribution only; parsing behavior and browser-local processing are unchanged.
 
 ## Tests
 
 ```sh
-(cd lab/third_party/loupe && go test ./... && go vet ./...)
-(cd lab/third_party/loupe && go test ./inspect -fuzz=FuzzParse -fuzztime=15s)
+(cd lab && go test github.com/jesusxy/loupe/inspect && go vet github.com/jesusxy/loupe/inspect)
 python3 scripts/verify-site.py
+```
+
+Optional fuzzing runs from a Loupe checkout, where the parser is owned. Go does not support fuzzing a dependency outside the main module. From that checkout, run:
+
+```sh
+go test ./inspect -fuzz=FuzzParse -fuzztime=15s
 ```
 
 For browser checks, install `playwright@1.62.1` in a temporary directory and its Chromium runtime, serve `public/` on port 1415, and run:
