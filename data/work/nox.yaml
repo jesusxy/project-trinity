@@ -1,7 +1,7 @@
 # Exact first rule from Nox; condition and output labels retain its configured values.
 source:
   repository: https://github.com/jesusxy/bit-by-bit
-  commit: 21253c44f7f000078517def21c42bf123fd250f4
+  commit: 887e9735095f964ad024f9e29a9ee4d0cd7e345c
   path: nox/detections/rules.yaml
   url: https://github.com/jesusxy/bit-by-bit/blob/887e9735095f964ad024f9e29a9ee4d0cd7e345c/nox/detections/rules.yaml#L1-L10
   evaluation: nox/internal/rules/definition.go:EvaluateYAMLRule
