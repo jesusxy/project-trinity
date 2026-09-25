@@ -71,6 +71,8 @@ PLAYWRIGHT_MODULE=/path/to/node_modules/playwright node tests/browser.cjs
 
 Optional settings: `TRINITY_URL`, `CHROMIUM_PATH`, `TRINITY_QA`, and `LOUPE_FIXTURE` (a PE fixture to **statically inspect**, never execute). Synthetic test fixtures remain in test memory and are not published. Screenshots are ignored under `tests/results/`.
 
+The browser suite also runs `tests/file-map.cjs`: it checks raw-offset geometry, headers, gaps, overlapping ranges, tiny and zero-byte sections, precise cursor offsets/RVAs, locked selection, visible measurements/bytes, keyboard exploration, and touch dragging. Set `LOUPE_RELEASE_FIXTURE`, `LOUPE_DEBUG_FIXTURE`, and `LOUPE_GO_FIXTURE` to the existing development binaries to repeat geometry checks and capture workspaces at 1440, 390, and 320 px. These files are read locally, never launched or committed.
+
 ## Deployment
 
 GitHub Actions verifies pull requests and pushes to `master`. A push to `master` deploys the tested artifact with the existing GitHub Pages action and `project-trinity.io` CNAME. Hugo, Go, and browser test versions are pinned. No backend or upload endpoint exists.

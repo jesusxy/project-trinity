@@ -31,6 +31,22 @@ PE diagnostics remain in the native CLI. File-size budgets are interface policy:
 
 Supported: x86 PE32 and AMD64 PE32+, preferred base/entry addresses, image/header sizes, section alignment, section descriptors, declared permissions, and up to 128 preview bytes per section. Hexadecimal strings preserve 64-bit addresses across the Go/JavaScript boundary. Bars describe relative raw section sizes, not memory activity. Imports remain omitted because Loupe currently walks them through emulated memory.
 
+### Loaded Loupe workspace
+
+The initial Lab and uploader are unchanged. Successful inspection switches the page into a specimen workspace: the introduction contracts, the uploader leaves the layout, and a persistent identity area shows the filename, format/machine, file size, entry RVA, image base, and section count. “Change file” invokes the existing local picker; “Clear file” restores the initial interface. The remaining global metadata and preferred-layout explanation live in an “IMAGE DETAILS” disclosure, collapsed by default. Post-load scrolling anchors to the compact Loupe project header, keeping it above the specimen near the top of the viewport. The map’s monospace EXPLORE / LOCK instructions distinguish transient exploration from selection; the runtime/security rail remains secondary.
+
+On desktop, the grouped section index occupies a scrolling left column beside the file map, wide selected-region measurements, and one intrinsic-width hex/ASCII pane. There is one locked selection, shared by all three surfaces. The section index retains every section, table-order identities, image/toolchain grouping, and blue bars measuring raw size relative to the largest section. Selection uses a separate marker and text treatment. It no longer expands another inspector below the map or duplicates section navigation in a name rail.
+
+The file coordinate adapter, `fileLayout`, consumes Loupe's existing `size`, `headerSize`, section `offset`, and `rawSize`. Each region's left edge is `offset / size` and its width is `rawSize / size`; headers occupy `[0, headerSize)`. Section-table indexes preserve identity even when names repeat or the index groups sections differently. RVAs and virtual sizes do not affect map geometry. The complement of the declared ranges remains visible as “Unassigned,” including trailing bytes, without guessing their contents. Overlapping declarations retain their offsets on separate tracks. Sections without file-backed ranges remain selectable in the index, without claiming strip width.
+
+Pointer movement converts its actual position in the strip to an absolute file byte, clamped to `[0, file size − 1]`. The cursor and readout show that offset and region, with `section RVA + (offset − section raw offset)` only inside the declared virtual extent and the RVA range. Headers, gaps, and raw padding do not claim section RVAs. Hover is transient; leaving restores the locked offset. Pointer release locks the exact byte and updates section measurements and preview together. Pointer events preserve fractional coordinates that legacy click events can round. Keyboard users can focus regions, explore by byte with Left/Right (16 with Shift), use Home/End within the region, and lock with Enter/Space. Up/Down and Home/End navigate the index.
+
+The hex pane always displays the selected section's existing bounded preview, starting at its actual absolute raw offset: up to 128 real bytes, 16 per row, with printable ASCII and `.` for non-printable bytes. Scrubbing does not invent or fetch a byte window at the cursor. Zero-byte sections explicitly have no file-backed bytes. Headers and gaps show their file measurements and explain that byte previews are available for sections.
+
+At 1000 px and below, the map, collapsible index, measurements, and hex pane stack. The file strip retains its 720 px coordinate surface. On touch, dragging the strip explores and release locks; the ruler remains a native horizontal pan surface. The index supplies large targets for tiny/unbacked sections and collapses after selection, bringing measurements into view. Hex rows scroll locally. A compact specimen name remains sticky on phones. Motion is limited to workspace entry and real state highlights, with reduced-motion support. Clearing or replacing a specimen disposes its observers/listeners and selection state. Research links remain available.
+
+No Loupe parser, Go/WASM adapter, module version, worker, file limits, or inspection capability changed. All new coordinates derive from the existing result model; no image-space toggle, disassembly, imports, or execution instrumentation was added.
+
 ### Hostile input boundary
 
 - No execution, native loading, script evaluation, or user-supplied WebAssembly instantiation.
@@ -57,12 +73,12 @@ Measured from local minified production output; gzip numbers are estimates, not 
 | --- | ---: | ---: |
 | Original homepage HTML + CSS + hero GIF | 4,829,937 B | GIF dominates |
 | New homepage HTML + CSS | about 26 KB | about 7.2 KB |
-| Lab controller | 4,490 B | 1,914 B |
+| Lab controller (loaded workspace) | 16,422 B | 6,109 B |
 | Worker | 537 B | 337 B |
 | Go JS runtime | 8,122 B | 2,649 B |
 | Loupe WASM | 3,099,193 B | 864,510 B |
 
-There are no external fonts or frontend framework dependencies. Hugo minifies and fingerprints CSS/JS/WASM. Only the Lab loads its 4.5 KB controller. The worker, matching Go runtime, and WASM are fetched **after file selection**, not merely on Lab navigation. Browser checks verified zero WASM requests across all initial page visits. The large original GIF is no longer requested.
+There are no external fonts or frontend framework dependencies. Hugo minifies and fingerprints CSS/JS/WASM. Only the Lab loads its 16.4 KB controller. The worker, matching Go runtime, and WASM are fetched **after file selection**, not merely on Lab navigation. Browser checks verified zero WASM requests across all initial page visits. The large original GIF is no longer requested.
 
 ## Validation
 

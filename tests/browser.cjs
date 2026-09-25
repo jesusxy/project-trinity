@@ -1,4 +1,4 @@
-/* Browser checks use synthetic PE fixtures only; no fixture is ever executed. */
+/* Browser checks inspect synthetic and optional real PE fixtures; none are executed. */
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -6,11 +6,20 @@ const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const base = process.env.TRINITY_URL || 'http://127.0.0.1:1415';
 const out = process.env.TRINITY_QA || 'tests/results';
 async function assertKeyboardScroll(page, element) {
+  // Avoid racing the page's smooth scroll, including the no-JS fallback where
+  // Playwright's animation-frame-based stability wait cannot complete.
+  await element.evaluate(e=>e.scrollIntoView({block:'center',behavior:'instant'}));
   await element.focus();
   await page.keyboard.press('ArrowRight');
-  // Poll from Node: page-side timers do not run with JavaScript disabled.
+  // Let native scrolling finish before the next viewport/reset. Observing only
+  // its first animated pixel can race the next key press. Poll from Node since
+  // page-side timers do not run with JavaScript disabled.
+  let previous=-1, stable=0;
   for (let attempt=0;attempt<20;attempt++) {
-    if (await element.evaluate(e=>e.scrollLeft>0)) return;
+    const current=await element.evaluate(e=>e.scrollLeft);
+    stable=current>0&&current===previous ? stable+1 : 0;
+    if(stable>=2)return;
+    previous=current;
     await new Promise(resolve=>setTimeout(resolve,50));
   }
   assert.fail('focused technical content did not scroll with the keyboard');
@@ -84,7 +93,9 @@ async function assertHexBytes(preview, bytes, offset) {
  assert.match(await page.locator('#inspection').textContent(),/PE32\+/);assert.match(await page.locator('#inspection').textContent(),/0x140001000/);
  assert.deepEqual(await page.locator('.lab-spec > span').allTextContents(),['ENGINE / LOUPE','MODE / STATIC INSPECTION','RUNTIME / GO · WASM','PROCESSING / LOCAL','EXECUTION / NONE','UPLOAD / NONE']);
  assert.equal(await page.locator('.section-group').count(),0,'ordinary image does not need section groups');
- await page.locator('summary').click();assert.equal(await page.locator('details[open]').count(),1);
+ assert.equal(await page.locator('.drop-zone').isVisible(),false,'uploader contracts after success');
+ assert.equal(await page.locator('#inspection').getAttribute('data-selected'),'section-0');
+ assert.equal(await page.locator('.workspace-global').getAttribute('open'),null,'secondary image details stay collapsed on load');
  await assertHexBytes(page.locator('.hex-preview'),fixture().subarray(512),512);
  const sectionData=[
   {name:'.debug_info',data:Buffer.from(Array.from({length:129},(_,i)=>i))},
@@ -95,38 +106,41 @@ async function assertHexBytes(preview, bytes, offset) {
   {name:'.custom',data:Buffer.from([0x81])},
  ];
  const mixed=sectionFixture(sectionData);
- await input.setInputFiles({name:'sections.exe',mimeType:'application/octet-stream',buffer:mixed});
+ const pickerPending=page.waitForEvent('filechooser');
+ await page.getByRole('button',{name:'Change file',exact:true}).click();
+ await (await pickerPending).setFiles({name:'sections.exe',mimeType:'application/octet-stream',buffer:mixed});
  await page.locator('#inspection').waitFor({state:'visible'});
- assert.equal(await page.locator('.section-detail').count(),sectionData.length,'keep every reported section');
+ assert.equal(await page.locator('.section-row').count(),sectionData.length,'keep every reported section');
  const groups=page.locator('.section-group');
  assert.deepEqual(await groups.locator('h4').allTextContents(),['Image / Runtime','Debug / Toolchain']);
  assert.deepEqual(await groups.nth(0).locator('.section-name').allTextContents(),['.text','.pdata','.bss','.custom']);
  assert.deepEqual(await groups.nth(1).locator('.section-name').allTextContents(),['.debug_info','.comment']);
- const textSection=page.locator('.section-detail').filter({has:page.locator('.section-name',{hasText:/^\.text$/})});
- const debugSection=page.locator('.section-detail').filter({has:page.locator('.section-name',{hasText:/^\.debug_info$/})});
+ const textSection=page.locator('.section-row').filter({has:page.locator('.section-name',{hasText:/^\.text$/})});
+ const debugSection=page.locator('.section-row').filter({has:page.locator('.section-name',{hasText:/^\.debug_info$/})});
  const barAppearance=()=>textSection.locator('.section-bar').evaluate(e=>{
   const css=getComputedStyle(e);return {width:css.width,height:css.height,color:css.backgroundColor};
  });
  const closedBar=await barAppearance();
- await textSection.locator('summary').click();await debugSection.locator('summary').click();
- assert.deepEqual(await barAppearance(),closedBar,'opening a section must not change its quantitative bar');
- await textSection.locator('summary').click();
- assert.deepEqual(await barAppearance(),closedBar,'closing a section must not change its quantitative bar');
- await textSection.locator('summary').click();
- assert.equal(await page.locator('details[open]').count(),2,'sections still expand independently');
- await assertHexBytes(textSection.locator('.hex-preview'),mixed.subarray(0x600,0x600+sectionData[1].data.length),0x600);
- await assertHexBytes(debugSection.locator('.hex-preview'),mixed.subarray(0x400,0x400+129),0x400);
- assert.ok(await textSection.locator('.hex-preview').evaluate(e=>e.clientWidth<e.closest('details').clientWidth),'desktop hex panel should fit its content');
- assert.ok(await textSection.locator('.hex-preview').evaluate(e=>e.scrollWidth===e.clientWidth),'all byte columns should fit on desktop');
+ await textSection.click();
+ const preview=page.locator('.hex-preview');
+ await assertHexBytes(preview,mixed.subarray(0x600,0x600+sectionData[1].data.length),0x600);
+ await debugSection.click();
+ await assertHexBytes(preview,mixed.subarray(0x400,0x400+129),0x400);
+ assert.deepEqual(await barAppearance(),closedBar,'selection must not change its quantitative bar');
+ await textSection.click();
+ assert.equal(await page.locator('.section-row[aria-pressed="true"]').count(),1,'one locked selection');
+ assert.ok(await preview.evaluate(e=>e.clientWidth<e.closest('section').clientWidth),'desktop hex panel should fit its content');
+ assert.ok(await preview.evaluate(e=>e.scrollWidth===e.clientWidth),'all byte columns should fit on desktop');
  assert.equal(await page.locator('#inspection img').count(),0,'ASCII content rendered as text');
  const textBar=await textSection.locator('.section-bar').evaluate(e=>parseFloat(e.style.width));
  assert.ok(Math.abs(textBar-sectionData[1].data.length/129*100)<0.001,'bar scale includes the largest debug section');
- const emptySection=page.locator('.section-detail').filter({has:page.locator('.section-name',{hasText:/^\.bss$/})});
- await emptySection.locator('summary').click();assert.equal(await emptySection.locator('.hex-preview').textContent(),'No file-backed bytes.');
+ const emptySection=page.locator('.section-row').filter({has:page.locator('.section-name',{hasText:/^\.bss$/})});
+ await emptySection.click();assert.equal(await preview.textContent(),'No file-backed bytes.');
+ await textSection.click();
  await page.screenshot({path:path.join(out,'lab-result.png'),fullPage:true});
  for(const width of [390,320]){
   await page.setViewportSize({width,height:900});
-  const preview=textSection.locator('.hex-preview');
+  const preview=page.locator('.hex-preview');
   assert.equal(await preview.evaluate(e=>getComputedStyle(e).whiteSpace),'pre');
   assert.ok(await preview.evaluate(e=>e.scrollWidth>e.clientWidth),'hex rows have a local horizontal scroll area');
   await preview.evaluate(e=>{e.scrollLeft=0;});await assertKeyboardScroll(page,preview);
@@ -169,14 +183,15 @@ async function assertHexBytes(preview, bytes, offset) {
  const payload=Array.from(fixture());
  const transfer=await page.evaluateHandle(bytes=>{const dt=new DataTransfer();dt.items.add(new File([new Uint8Array(bytes)],"dropped.exe"));return dt;},payload);
  await page.locator('.drop-zone').dispatchEvent('drop',{dataTransfer:transfer});await page.locator('#inspection').waitFor({state:'visible'});assert.match(await page.locator('#inspection h2').textContent(),/dropped.exe/);
- await page.locator('summary').focus();await page.keyboard.press('Enter');assert.equal(await page.locator('details[open]').count(),1);
+ await page.locator('.section-index>summary').click();await page.locator('.section-row').focus();await page.keyboard.press('Enter');assert.equal(await page.locator('.section-row[aria-pressed="true"]').count(),1);
  let stalled;
  await page.route('**/*.wasm',route=>{stalled=route;});
  await input.setInputFiles({name:'deadline.exe',mimeType:'application/octet-stream',buffer:fixture()});
  await page.getByRole('status').filter({hasText:'Inspection timed out'}).waitFor({timeout:20000});
  await stalled?.abort();await page.unroute('**/*.wasm');assert.equal(await page.locator('#inspection').isVisible(),false);
  // Real project fixture is optional and inspected only, never launched.
- if(process.env.LOUPE_FIXTURE){await input.setInputFiles(process.env.LOUPE_FIXTURE);await page.locator('#inspection').waitFor({state:'visible'});assert.ok((await page.locator('summary').count())>1);await page.screenshot({path:path.join(out,'loupe-real-fixture.png'),fullPage:true});}
+ if(process.env.LOUPE_FIXTURE){await input.setInputFiles(process.env.LOUPE_FIXTURE);await page.locator('#inspection').waitFor({state:'visible'});assert.ok((await page.locator('.section-row').count())>1);await page.screenshot({path:path.join(out,'loupe-real-fixture.png'),fullPage:true});}
+ await require('./file-map.cjs')({browser,page,base,out,fixture});
  assert.equal(await page.evaluate(()=>localStorage.length+sessionStorage.length),0,'persistent storage used');
  assert.equal(requests.filter(r=>r.method!=='GET'||r.data).length,0,'unexpected network mutation');
  assert.equal(requests.filter(r=>!r.url.startsWith(base)).length,0,'unexpected external requests');
