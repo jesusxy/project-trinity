@@ -20,7 +20,7 @@ Run the build script before the first Hugo preview. It resolves the pinned Loupe
 - `themes/trinity/layouts/`: the original custom theme, refined in place.
 - `layouts/research/`: revision-aware research template.
 - `assets/css/style.css`: shared design tokens, layout, and responsive rules; processed by Hugo Pipes.
-- `assets/js/`: Lab controller and worker only. Other pages load no JavaScript.
+- `assets/js/`: page-scoped Lab and Work index controllers, plus the Lab worker. Other pages load no JavaScript.
 - `lab/`: Go/WASM adapter with Loupe pinned in `go.mod` and checksums in `go.sum`.
 - `scripts/`: reproducible build and generated-site checks.
 - `tests/browser.cjs`: responsive and browser integration checks.

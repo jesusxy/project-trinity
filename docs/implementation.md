@@ -21,6 +21,15 @@ Work → Research → Lab → Canon forms a small navigable system. Research rec
 
 `/projects/loupe/` is PRJ-001's editorial surface: purpose, architecture, implementation and development limits. `/labs/` is LAB-001, a live interface **to PRJ-001**, not another project. The project links into the instrument; the instrument links back into the explanation and address-model research. A single complete instrument replaces the empty Labs directory. No placeholder experiments were introduced.
 
+## Lab runtime principles
+
+These principles guide additional instruments and experiments; the Loupe sections below document the current implementation.
+
+- **Keep engine ownership clear.** Parsing, analysis, and execution semantics belong to the relevant project engine. Trinity's adapters expose bounded results; the Lab manages input, lifecycle, interaction, coordinates, and visualization. Do not create a second parser or detector in the browser UI. Label source snapshots and architectural descriptions accurately, following the [specimen guidance](work-specimens.md).
+- **Activate deliberately.** Render the surrounding page and explanatory content with Hugo. A small page controller may initialize controls, but defer engine code, WASM, workers, and substantial experiment assets until the user activates the relevant instrument. Merely visiting the site or another project must not start an experiment.
+- **Bound and dispose of work.** Keep expensive computation off the UI thread where needed, with explicit input/result limits, cancellation, and deadlines. Replacing or clearing input must invalidate stale results and release unneeded workers, buffers, observers, and listeners. Clean up on page exit; pause ongoing rendering or polling when inactive or hidden instead of maintaining activity for appearance.
+- **Preserve the declared boundary.** Loupe remains local static inspection with no binary upload or execution. New instruments must state what actually runs, what data leaves the browser, and what limits apply. Future capabilities must not appear as functioning controls or simulated telemetry before their engine support exists.
+
 ## Loupe integration
 
 `ImageInfo` and the PE field extraction/architecture checks were extracted from the real adjacent Loupe checkout (`9439f51f`) into Loupe's `inspect` package. The native CLI now opens a bounded reader and calls `inspect.Parse`. Both consumers import `github.com/jesusxy/loupe/inspect`. A thin Go adapter compiles that same package for `GOOS=js GOARCH=wasm`; it only serializes the resulting image model and bounded byte previews. The inspection package and WASM dependency graph have no Unicorn dependency.
@@ -64,6 +73,15 @@ The underlying [Go PE reader is not hardened against adversarial input](https://
 `scripts/build.py` takes the source commit from `GITHUB_SHA` or local `git rev-parse HEAD`, checks the working tree for local changes, timestamps the actual build in UTC, and records GitHub run ID/attempt/link when available. Hugo renders this near the unchanged footer. No deployment time is claimed. Generated data is ignored and regenerated for every scripted build.
 
 The build also tests and vets the pinned `github.com/jesusxy/loupe/inspect` package before compiling the WASM adapter. It writes the resolved module path, version, and exact `EntryPointVA` assignment from the downloaded `inspect/inspect.go` to ignored `data/loupe_core.json`. Hugo renders the source excerpt from that data, so the project page follows the same dependency as the Lab. The build fails if the assignment cannot be extracted as expected. Update the dependency in `lab/` with `go get github.com/jesusxy/loupe@<commit-or-version>` and `go mod tidy`, then rebuild and review both module files.
+
+## Performance and resource efficiency
+
+Performance is part of the design, not a cleanup step. Evaluate visual and runtime choices by the information they expose and their cost in startup time, client CPU/GPU, retained memory, and network requests.
+
+- **Choose the least costly adequate renderer.** Start with semantic HTML/CSS for layout, controls, and data. Use SVG when vector geometry or a coordinate diagram needs it; consider Canvas for dense, frequently updated 2D scenes when DOM/SVG cost becomes a demonstrated constraint. Use WebGL only for a justified GPU workload. This is a preference order, not a requirement to prototype every tier. Keep controls, reading order, keyboard/touch access, and reduced-motion behavior usable as rendering becomes more complex.
+- **Keep ordinary pages inexpensive.** Prefer build-time data and the existing Hugo asset pipeline and system fonts. Scope scripts and assets to the pages that need them. Do not add a global framework, font download, library, or background request for an effect that existing HTML/CSS or a small local controller can provide.
+- **Make active work proportional to need.** Update on input or actual data changes; do not poll or run frame loops to make a static result look alive. Bound rendered and retained data, avoid redundant copies of large inputs, and transfer buffer ownership where appropriate. Use caching, virtualization, or more complex scheduling only when the workload justifies their memory and maintenance costs.
+- **Measure changes honestly.** For meaningful runtime or rendering changes, check asset/request costs, idle and active work, responsiveness, and memory cleanup on representative desktop and mobile inputs. Record the conditions and tradeoffs when adding substantial cost. Distinguish local size estimates from observed transfers and measured behavior; the figures below are observations, not universal budgets or performance guarantees.
 
 ## Performance measurement
 
