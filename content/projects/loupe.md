@@ -1,6 +1,6 @@
 ---
 title: "Loupe"
-date: 2026-01-01
+date: 2025-01-01
 weight: 1
 record_id: "PRJ-001"
 record_class: "software"
