@@ -36,6 +36,13 @@ a {
 a:hover {
   color:var(--cobalt-dark);
 }
+.link-arrow {
+  display:inline-block;
+  width:1em;
+  height:1em;
+  vertical-align:-.125em;
+  color:var(--cobalt-dark);
+}
 button,input {
   font:inherit;
 }

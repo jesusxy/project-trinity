@@ -25,7 +25,7 @@
       {{ $hasPreview := in (slice "PRJ-001" "PRJ-002") .Params.record_id }}
       <article class="work-entry" aria-labelledby="work-{{ .Params.record_id }}"{{ if $hasPreview }} data-preview="preview-{{ .Params.record_id }}"{{ end }}>
         <span class="work-id">{{ .Params.record_id }}</span>
-        <h2 id="work-{{ .Params.record_id }}"><a href="{{ .RelPermalink }}">{{ .Title }} <span aria-hidden="true">↗</span></a></h2>
+        <h2 id="work-{{ .Params.record_id }}"><a href="{{ .RelPermalink }}">{{ .Title }} <span aria-hidden="true">{{ partial "link-arrow.html" . }}</span></a></h2>
         <span class="work-status">{{ .Params.status }}</span>
         <p>{{ .Description }}</p>
         {{ if $hasPreview }}<button class="work-preview-button" type="button" aria-label="Preview {{ .Title }}" aria-controls="preview-{{ .Params.record_id }}" aria-expanded="false" hidden>Preview <span aria-hidden="true">+</span></button>{{ end }}

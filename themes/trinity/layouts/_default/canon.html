@@ -16,8 +16,8 @@
       <h2 id="title-{{ .id }}">{{ with .url }}<a href="{{ . }}">{{ end }}{{ .title }}{{ with .url }}</a>{{ end }}</h2>
       {{ end }}
       <p class="reference-source">{{ .source }}</p>
-      {{ if eq .format "paper" }}<a class="reference-action" href="{{ .url }}">Read the paper ↗</a>{{ end }}
-      {{ if eq .format "film" }}<a class="reference-action" href="{{ .url }}">Watch the film ↗</a>{{ end }}
+      {{ if eq .format "paper" }}<a class="reference-action" href="{{ .url }}">Read the paper {{ partial "link-arrow.html" . }}</a>{{ end }}
+      {{ if eq .format "film" }}<a class="reference-action" href="{{ .url }}">Watch the film {{ partial "link-arrow.html" . }}</a>{{ end }}
     </article>
     {{ end }}
   </div>

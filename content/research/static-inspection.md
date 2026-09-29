@@ -52,5 +52,3 @@ A future static import reader belongs in Loupe’s shared core with malformed-in
 - [Go `debug/pe` documentation and security caveat](https://pkg.go.dev/debug/pe).
 - [Go’s WebAssembly documentation](https://go.dev/wiki/WebAssembly).
 - [Loupe source at the extraction baseline](https://github.com/jesusxy/loupe/blob/9439f51fc84946046d6755c76cddeed58ba401e8/cmd/main.go).
-
-The relationship to [Canon]({{< relref "/canon" >}}) is a matter of standards: making the implementation answer to the claims made about it.

@@ -286,7 +286,7 @@ function render(result, name) {
   body.append(index,map.element,selectedPanel,bytesPanel);output.append(body,announcement);
   const footer=node("div",undefined,"workspace-footer");
   footer.append(node("span","GO · WASM / LOCAL · NO EXECUTION · NO UPLOAD"));
-  const reference=node("a","File offsets & RVAs ↗");reference.href=root.dataset.research;footer.append(reference);output.append(footer);
+  const reference=node("a","File offsets & RVAs ");reference.href=root.dataset.research;reference.append(root.querySelector("[data-link-arrow]").content.cloneNode(true));footer.append(reference);output.append(footer);
   const desktop=matchMedia("(min-width: 1001px)");
   const adaptIndex=()=>{index.open=desktop.matches;};adaptIndex();desktop.addEventListener("change",adaptIndex);
   disposeInspection=()=>{map.dispose();desktop.removeEventListener("change",adaptIndex);};

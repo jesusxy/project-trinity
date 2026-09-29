@@ -2,5 +2,5 @@
   {{ with .Params.record_id }}<span class="record-id">{{ . }}</span>{{ end }}
   <div class="record-subject"><h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>{{ with .Description }}<p>{{ . }}</p>{{ end }}</div>
   <span class="record-status">{{ .Params.status }}{{ with .Params.revision }} / R{{ printf "%02d" (int .) }}{{ end }}</span>
-  <span aria-hidden="true">↗</span>
+  <span aria-hidden="true">{{ partial "link-arrow.html" . }}</span>
 </article>

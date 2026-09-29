@@ -24,6 +24,6 @@
   </div>
   <figcaption>
     <p>One section from Loupe’s test fixture, read by <code>inspect.Parse</code>.</p>
-    <a class="artifact-source" href="{{ $specimen.source.url }}" title="Fixture SHA-256: {{ $image.sha256 }}">{{ $specimen.source.path }} · SHA-256 {{ substr $image.sha256 0 8 }} ↗</a>
+    <a class="artifact-source" href="{{ $specimen.source.url }}" title="Fixture SHA-256: {{ $image.sha256 }}">{{ $specimen.source.path }} · SHA-256 {{ substr $image.sha256 0 8 }} {{ partial "link-arrow.html" . }}</a>
   </figcaption>
 </figure>
