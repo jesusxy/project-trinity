@@ -7,7 +7,7 @@ record_class: "research"
 status: "active notes"
 revision: 2
 description: "Separating a PE image model from the machinery that executes it."
-related: ["/projects/loupe", "/research/pe-address-spaces", "/canon"]
+related: ["/projects/loupe", "/research/pe-address-spaces"]
 revisions:
   - revision: 2
     date: "2026-09-21"
